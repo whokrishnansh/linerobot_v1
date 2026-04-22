@@ -130,6 +130,13 @@ export const COMPONENTS = [
     role: 'The Brain',
     quantity: 1,
     tier: 'core',
+    model: {
+      url: '/models/arduino_uno.glb',
+      fit: 2.25,
+      zoom: 70,
+      rotation: [-1.2, 0.15, -0.45],
+      offset: [0, -0.02, 0],
+    },
     placeholderSvg: ArduinoSvg,
   },
   {
@@ -138,6 +145,13 @@ export const COMPONENTS = [
     role: 'The Eyes',
     quantity: 2,
     tier: 'core',
+    model: {
+      url: '/models/infrared_sensor_ir_sensor.glb',
+      fit: 2.1,
+      zoom: 74,
+      rotation: [0.95, 0.25, -0.75],
+      offset: [0, -0.04, 0],
+    },
     placeholderSvg: IRSensorSvg,
   },
   {
@@ -146,6 +160,13 @@ export const COMPONENTS = [
     role: 'The Controller',
     quantity: 1,
     tier: 'core',
+    model: {
+      url: '/models/l298n_motor_driver.glb',
+      fit: 1.95,
+      zoom: 70,
+      rotation: [0.82, 0, -0.48],
+      offset: [0, -0.03, 0],
+    },
     placeholderSvg: L298NSvg,
   },
   {
@@ -154,6 +175,13 @@ export const COMPONENTS = [
     role: 'The Wheels',
     quantity: 2,
     tier: 'core',
+    model: {
+      url: '/models/bo_battery_operated_motor.glb',
+      fit: 2.25,
+      zoom: 70,
+      rotation: [-0.55, 0.55, -0.3],
+      offset: [0, -0.02, 0],
+    },
     placeholderSvg: MotorSvg,
   },
   {
@@ -178,6 +206,13 @@ export const COMPONENTS = [
     role: 'The Power',
     quantity: 1,
     tier: 'supply',
+    model: {
+      url: '/models/battery.glb',
+      fit: 0.92,
+      zoom: 38,
+      rotation: [0.5, -0.8, -0.2],
+      offset: [0, 0, 0],
+    },
     placeholderSvg: BatterySvg,
   },
   {
@@ -194,6 +229,13 @@ export const COMPONENTS = [
     role: 'The Junction',
     quantity: 1,
     tier: 'supply',
+    model: {
+      url: '/models/breadboard.glb',
+      fit: 1.96,
+      zoom: 68,
+      rotation: [0.88, -0.18, -0.62],
+      offset: [0, 0, 0],
+    },
     placeholderSvg: BreadboardSvg,
   },
   {
