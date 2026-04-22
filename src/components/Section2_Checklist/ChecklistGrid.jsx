@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { COMPONENTS } from '../../data/components.jsx';
 import { useToast, Toast } from '../../shared/Toast';
+import ComponentModelPreview from './ComponentModelPreview';
 
 const ALL_IDS = COMPONENTS.map(c => c.id);
 const CORE = COMPONENTS.filter(c => c.tier === 'core');
@@ -13,6 +14,7 @@ function ComponentCard({ component }) {
   const { checkedComponents, toggleComponent } = useApp();
   const checked = !!checkedComponents[component.id];
   const Svg = component.placeholderSvg;
+  const hasModel = !!component.model;
 
   return (
     <motion.button
@@ -70,24 +72,14 @@ function ComponentCard({ component }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 12,
+          padding: hasModel ? 0 : 12,
         }}
       >
-        <Svg />
-        <span
-          style={{
-            position: 'absolute',
-            bottom: 6,
-            left: 8,
-            fontSize: 8,
-            color: '#A1A1A1',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            fontFamily: 'JetBrains Mono, monospace',
-          }}
-        >
-          placeholder
-        </span>
+        {hasModel ? (
+          <ComponentModelPreview model={component.model} fallback={Svg} />
+        ) : (
+          <Svg />
+        )}
       </div>
 
       <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#737373', marginBottom: 4 }}>
@@ -103,6 +95,7 @@ function SupplyCard({ component }) {
   const { checkedComponents, toggleComponent } = useApp();
   const checked = !!checkedComponents[component.id];
   const Svg = component.placeholderSvg;
+  const hasModel = !!component.model;
 
   return (
     <motion.button
@@ -137,10 +130,15 @@ function SupplyCard({ component }) {
           justifyContent: 'center',
           flexShrink: 0,
           overflow: 'hidden',
-          padding: 6,
+          padding: hasModel ? 0 : 6,
+          position: 'relative',
         }}
       >
-        <Svg />
+        {hasModel ? (
+          <ComponentModelPreview model={component.model} fallback={Svg} />
+        ) : (
+          <Svg />
+        )}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
