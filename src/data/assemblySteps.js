@@ -5,20 +5,28 @@ export const ARDUINO_CODE = `// ATL Robot Lab — Line Following Robot
 #define LEFT_SENSOR   2    // IR sensor — left
 #define RIGHT_SENSOR  3    // IR sensor — right
 
-#define IN1  5    // L298N motor A forward
-#define IN2  6    // L298N motor A backward
-#define IN3  7    // L298N motor B forward
-#define IN4  8    // L298N motor B backward
+#define ENA  5    // L298N motor A enable (PWM)
+#define ENB  6    // L298N motor B enable (PWM)
+#define IN1  8    // L298N motor A forward
+#define IN2  9    // L298N motor A backward
+#define IN3  10   // L298N motor B forward
+#define IN4  11   // L298N motor B backward
 
 // === SETUP ===
 void setup() {
   pinMode(LEFT_SENSOR,  INPUT);
   pinMode(RIGHT_SENSOR, INPUT);
 
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
+
+  // Enable both motor channels at full speed
+  analogWrite(ENA, 200);
+  analogWrite(ENB, 200);
 
   Serial.begin(9600);
   Serial.println("Line follower ready.");
@@ -139,7 +147,7 @@ export const ASSEMBLY_STEPS = [
     phase: 'Wiring',
     phaseColor: '#F59E0B',
     title: 'Connect motors to the L298N',
-    body: 'Run the two motor wire pairs into OUT1/OUT2 (right motor) and OUT3/OUT4 (left motor) screws on the L298N.',
+    body: 'Run the two motor wire pairs into OUT1/OUT2 (left motor) and OUT3/OUT4 (right motor) screws on the L298N.',
     tip: 'Tighten each screw terminal until the wire has a firm pull-out resistance. Loose connections are the most common cause of motors not spinning.',
     reveal: ['chassis', 'motor', 'castor', 'arduino', 'breadboard', 'l298n', 'ir', 'wires_motor'],
     camera: { position: [3, 5, 5], target: [1, 0, 0] },
@@ -159,8 +167,8 @@ export const ASSEMBLY_STEPS = [
     phase: 'Wiring',
     phaseColor: '#F59E0B',
     title: 'Wire L298N to the Arduino',
-    body: 'Run four wires from Arduino D5-D8 to L298N IN1-IN4 headers — these are the motor control signals.',
-    tip: 'Keep track of which wire goes where: D5→IN1, D6→IN2, D7→IN3, D8→IN4. Swapping any pair reverses that motor.',
+    body: 'Run six wires from the Arduino to the L298N: D5→ENA, D6→ENB (PWM speed), and D8–D11 to IN1–IN4 (direction).',
+    tip: 'Pin map: D5→ENA, D6→ENB, D8→IN1, D9→IN2, D10→IN3, D11→IN4. Swapping IN1/IN2 (or IN3/IN4) reverses that motor.',
     reveal: ['chassis', 'motor', 'castor', 'arduino', 'breadboard', 'l298n', 'ir', 'wires_motor', 'wires_sensor', 'wires_control'],
     camera: { position: [-2, 6, 5], target: [0, 0.2, 0] },
   },
@@ -169,8 +177,8 @@ export const ASSEMBLY_STEPS = [
     phase: 'Wiring',
     phaseColor: '#F59E0B',
     title: 'Connect the power',
-    body: 'Plug the 9V battery snap into the L298N power terminals — red to 12V, black to GND.',
-    tip: "Do NOT connect the battery yet — just route the wires. The L298N's onboard 5V regulator will power the Arduino from this connection.",
+    body: 'Wire Battery+ to L298N +12V and Arduino VIN (via the breadboard + rail), and Battery− to L298N GND. Tie Arduino GND to L298N GND for a common ground.',
+    tip: 'Do NOT connect the battery yet — just route the wires. Arduino is powered from Battery+ through VIN (7–12V). All GNDs must be common.',
     reveal: ['chassis', 'motor', 'castor', 'arduino', 'breadboard', 'l298n', 'ir', 'wires_motor', 'wires_sensor', 'wires_control', 'battery', 'wires_power'],
     camera: { position: [0, 8, 6], target: [0, 0, 0] },
   },

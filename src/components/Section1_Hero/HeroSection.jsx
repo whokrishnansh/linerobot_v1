@@ -215,7 +215,7 @@ export default function HeroSection() {
             </pattern>
             <path
               id="tp"
-              d="M 80 540 Q 140 540 180 480 Q 220 420 300 420 Q 400 420 440 340 Q 480 260 380 220 Q 280 180 300 100 Q 320 20 440 40 Q 520 50 520 140"
+              d="M 80 540 Q 140 540 180 480 Q 220 420 300 420 Q 400 420 440 340 Q 480 260 380 220 Q 280 180 300 100 Q 320 20 440 40 Q 555 55 620 140"
               fill="none"
             />
           </defs>
@@ -258,19 +258,18 @@ export default function HeroSection() {
 
             {/* Robot following the path */}
             <g>
-              <animateMotion dur="9s" repeatCount="indefinite" begin="1.8s">
+              <animateMotion dur="9s" repeatCount="indefinite" begin="1.8s" rotate="auto">
                 <mpath href="#tp" />
               </animateMotion>
-              {/* Purple chassis */}
-              <rect x="-18" y="-12" width="36" height="24" rx="4" fill="#7C3AED" />
-              {/* IR sensor dots */}
-              <circle cx="-8" cy="12" r="3" fill="#22C55E" />
-              <circle cx="8" cy="12" r="3" fill="#22C55E" />
-              {/* Wheels */}
-              <rect x="-20" y="-8" width="6" height="16" rx="3" fill="#1F2937" />
-              <rect x="14" y="-8" width="6" height="16" rx="3" fill="#1F2937" />
-              {/* Arduino green chip */}
-              <rect x="-8" y="-8" width="16" height="10" rx="2" fill="#006B3F" />
+              <image
+                href="/robot_png.png"
+                x="-48"
+                y="-32"
+                width="96"
+                height="64"
+                preserveAspectRatio="xMidYMid meet"
+                transform="rotate(180)"
+              />
             </g>
           </g>
         </svg>

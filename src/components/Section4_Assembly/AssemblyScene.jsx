@@ -12,6 +12,8 @@ const MODELS = {
   l298n:      '/models/l298n_motor_driver.glb',
   breadboard: '/models/breadboard.glb',
   battery:    '/models/battery.glb',
+  chassis:    '/models/lfr_chassis.glb',
+  castor:     '/models/caster_wheel.glb',
 };
 Object.values(MODELS).forEach(u => useGLTF.preload(u));
 
@@ -30,9 +32,11 @@ function GLBModel({ url, position = [0, 0, 0], size, rotation = [0, 0, 0] }) {
         o.receiveShadow = true;
       }
     });
-    c.rotation.set(rotation[0], rotation[1], rotation[2]);
-    c.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(c);
+    const wrapper = new THREE.Group();
+    wrapper.rotation.set(rotation[0], rotation[1], rotation[2]);
+    wrapper.add(c);
+    wrapper.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(wrapper);
     const dims = new THREE.Vector3();
     box.getSize(dims);
     const ctr = new THREE.Vector3();
@@ -40,7 +44,7 @@ function GLBModel({ url, position = [0, 0, 0], size, rotation = [0, 0, 0] }) {
     const sx = size[0] / (dims.x || 1);
     const sy = size[1] / (dims.y || 1);
     const sz = size[2] / (dims.z || 1);
-    return { cloned: c, scale: [sx, sy, sz], center: ctr };
+    return { cloned: wrapper, scale: [sx, sy, sz], center: ctr };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene, size[0], size[1], size[2], rotation[0], rotation[1], rotation[2]]);
 
@@ -49,6 +53,40 @@ function GLBModel({ url, position = [0, 0, 0], size, rotation = [0, 0, 0] }) {
       <group
         scale={scale}
         position={[-center.x * scale[0], -center.y * scale[1], -center.z * scale[2]]}
+      >
+        <primitive object={cloned} />
+      </group>
+    </group>
+  );
+}
+
+function GLBUniformModel({ url, position = [0, 0, 0], fit = 1, rotation = [0, 0, 0] }) {
+  const { scene } = useGLTF(url);
+
+  const { cloned, scale, center } = useMemo(() => {
+    const c = scene.clone(true);
+    c.traverse((o) => {
+      if (o.isMesh) {
+        o.castShadow = true;
+        o.receiveShadow = true;
+      }
+    });
+    c.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(c);
+    const dims = new THREE.Vector3();
+    box.getSize(dims);
+    const ctr = new THREE.Vector3();
+    box.getCenter(ctr);
+    const s = fit / (Math.max(dims.x, dims.y, dims.z) || 1);
+    return { cloned: c, scale: s, center: ctr };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene, fit]);
+
+  return (
+    <group position={position} rotation={rotation}>
+      <group
+        scale={scale}
+        position={[-center.x * scale, -center.y * scale, -center.z * scale]}
       >
         <primitive object={cloned} />
       </group>
@@ -69,8 +107,7 @@ function CurvedWire({ start, end, color, visible, arcHeight = 0.7, arcBias = 0.5
     );
     const curve = new THREE.CatmullRomCurve3([s, mid, e]);
     return new THREE.TubeGeometry(curve, 28, WIRE_RADIUS, 8, false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [start[0], start[1], start[2], end[0], end[1], end[2], arcHeight, arcBias]);
 
   if (!visible) return null;
 
@@ -114,22 +151,16 @@ function HighlightBox({ position, size, color }) {
   );
 }
 
-// ─── Chassis (programmatic — no GLB available) ───────────────────────────────
+// ─── Chassis (GLB) ───────────────────────────────────────────────────────────
 function Chassis({ visible }) {
   if (!visible) return null;
   return (
-    <group position={[0, 0.15, 0]}>
-      <mesh castShadow receiveShadow>
-        <boxGeometry args={[4, 0.3, 2.5]} />
-        <meshStandardMaterial color="#6D28D9" roughness={0.55} metalness={0.1} />
-      </mesh>
-      {[[-1.4, 0.17, -0.9], [1.2, 0.17, -0.9], [-1.4, 0.17, 0.9], [1.2, 0.17, 0.9]].map((pos, i) => (
-        <mesh key={i} position={pos}>
-          <cylinderGeometry args={[0.07, 0.07, 0.35, 8]} />
-          <meshStandardMaterial color="#4C1D95" />
-        </mesh>
-      ))}
-    </group>
+    <GLBUniformModel
+      url={MODELS.chassis}
+      position={[0, 0.1, 0]}
+      fit={4.25}
+      rotation={[0, Math.PI / 2, 0]}
+    />
   );
 }
 
@@ -158,16 +189,12 @@ function Motors({ visible }) {
 function Castor({ visible }) {
   if (!visible) return null;
   return (
-    <group position={[-2.25, 0.1, 0]}>
-      <mesh castShadow>
-        <boxGeometry args={[0.28, 0.22, 0.28]} />
-        <meshStandardMaterial color="#6B7280" />
-      </mesh>
-      <mesh position={[0, -0.2, 0]}>
-        <sphereGeometry args={[0.13, 14, 14]} />
-        <meshStandardMaterial color="#9CA3AF" metalness={0.55} roughness={0.3} />
-      </mesh>
-    </group>
+    <GLBUniformModel
+      url={MODELS.castor}
+      position={[-2.12, 0.08, 0]}
+      fit={0.42}
+      rotation={[0, 0, 0]}
+    />
   );
 }
 
@@ -178,7 +205,7 @@ function Arduino({ visible }) {
   return (
     <GLBModel
       url={MODELS.arduino}
-      position={[0.5, 0.375, 0.4]}
+      position={[0.2, 0.3, 0.1]}
       size={[1.2, 0.15, 1.0]}
       rotation={[-Math.PI / 2, 0, 0]}
     />
@@ -192,7 +219,7 @@ function Breadboard({ visible }) {
   return (
     <GLBModel
       url={MODELS.breadboard}
-      position={[0.3, 0.35, -0.8]}
+      position={[1.25, 0.275, 0.1]}
       size={[0.8, 0.1, 0.8]}
       rotation={[0, Math.PI / 2, 0]}
     />
@@ -204,7 +231,7 @@ function L298N({ visible }) {
   return (
     <GLBModel
       url={MODELS.l298n}
-      position={[-1.0, 0.48, 0.1]}
+      position={[-1.0, 0.4, 0.1]}
       size={[0.9, 0.36, 1.0]}
     />
   );
@@ -219,7 +246,7 @@ function IRSensors({ visible }) {
         <GLBModel
           key={idx}
           url={MODELS.ir}
-          position={[-2.15, 0.15, z]}
+          position={[-2.15, 0.19, z]}
           size={[0.75, 0.18, 0.4]}
           rotation={[0, Math.PI / 2, 0]}
         />
@@ -232,10 +259,11 @@ function IRSensors({ visible }) {
 function Battery({ visible }) {
   if (!visible) return null;
   return (
-    <GLBModel
+    <GLBUniformModel
       url={MODELS.battery}
-      position={[1.0, 0.76, 0.85]}
-      size={[0.35, 0.6, 0.25]}
+      position={[1.2, 0.46, 0.8]}
+      fit={0.6}
+      rotation={[-Math.PI / 2, 0, 0]}
     />
   );
 }
@@ -243,31 +271,34 @@ function Battery({ visible }) {
 // ─── Terminal/pin coordinate tables ──────────────────────────────────────────
 // Defined once so wire endpoints can reference them by name.
 const PINS = {
-  // Arduino pin header runs along the -X edge (x ≈ -0.05), y just above board top
+  // Arduino pin header runs along the -X edge, y just above board top
   ard: {
-    v5:  [-0.05, 0.455, -0.05],
-    gnd: [-0.05, 0.455,  0.05],
-    d2:  [-0.05, 0.455,  0.15],
-    d3:  [-0.05, 0.455,  0.25],
-    d5:  [-0.05, 0.455,  0.40],
-    d6:  [-0.05, 0.455,  0.55],
-    d7:  [-0.05, 0.455,  0.70],
-    d8:  [-0.05, 0.455,  0.85],
+    vin: [-0.35, 0.415, -0.45],
+    v5:  [-0.35, 0.415, -0.35],
+    gnd: [-0.35, 0.415, -0.25],
+    d2:  [-0.35, 0.415, -0.15],
+    d3:  [-0.35, 0.415, -0.05],
+    d5:  [-0.35, 0.415,  0.10],
+    d6:  [-0.35, 0.415,  0.20],
+    d8:  [-0.35, 0.415,  0.35],
+    d9:  [-0.35, 0.415,  0.45],
+    d10: [-0.35, 0.415,  0.55],
+    d11: [-0.35, 0.415,  0.65],
   },
   // L298N: OUT screw block on +X edge (facing motors), IN pin header on -X edge
   l298n: {
-    out1: [-0.55, 0.40, -0.32],
-    out2: [-0.55, 0.40, -0.18],
-    out3: [-0.55, 0.40,  0.18],
-    out4: [-0.55, 0.40,  0.32],
-    in1:  [-1.45, 0.52, -0.30],
-    in2:  [-1.45, 0.52, -0.10],
-    in3:  [-1.45, 0.52,  0.10],
-    in4:  [-1.45, 0.52,  0.30],
-    v12:  [-1.30, 0.38,  0.55],
-    gnd1: [-1.10, 0.38,  0.55],
-    v5:   [-0.80, 0.38,  0.55],
-    gnd2: [-1.10, 0.38,  0.50], // second GND tap (co-located screw) → Arduino
+    out1: [-0.05, 0.36,  0.28],
+    out2: [-0.05, 0.36,  0.42],
+    out3: [-0.05, 0.36,  0.78],
+    out4: [-0.05, 0.36,  0.92],
+    ena:  [-0.95, 0.48,  0.15],
+    in1:  [-0.95, 0.48,  0.30],
+    in2:  [-0.95, 0.48,  0.45],
+    in3:  [-0.95, 0.48,  0.60],
+    in4:  [-0.95, 0.48,  0.75],
+    enb:  [-0.95, 0.48,  0.90],
+    v12:  [-0.80, 0.34,  1.15],
+    gnd1: [-0.60, 0.34,  1.15],
   },
   // Motor wire pads on the body end (opposite shaft)
   mot: {
@@ -278,26 +309,26 @@ const PINS = {
   },
   // IR sensor 3-pin headers, clustered near the +X end of each module
   ir: {
-    leftVcc:  [-1.85, 0.22, -0.48],
-    leftGnd:  [-1.85, 0.22, -0.55],
-    leftOut:  [-1.85, 0.22, -0.62],
-    rightVcc: [-1.85, 0.22,  0.48],
-    rightGnd: [-1.85, 0.22,  0.55],
-    rightOut: [-1.85, 0.22,  0.62],
+    leftVcc:  [-1.85, 0.32, -0.48],
+    leftGnd:  [-1.85, 0.32, -0.55],
+    leftOut:  [-1.85, 0.32, -0.62],
+    rightVcc: [-1.85, 0.32,  0.48],
+    rightGnd: [-1.85, 0.32,  0.55],
+    rightOut: [-1.85, 0.32,  0.62],
   },
   // Breadboard rails — two rails along Z axis at different X positions on top
   bb: {
-    plusA:  [0.00, 0.405, -1.10],
-    plusB:  [0.30, 0.405, -1.10],
-    plusC:  [0.60, 0.405, -1.10],
-    minusA: [0.00, 0.405, -0.50],
-    minusB: [0.30, 0.405, -0.50],
-    minusC: [0.60, 0.405, -0.50],
+    plusA:  [-0.10, 0.365, -0.80],
+    plusB:  [ 0.20, 0.365, -0.80],
+    plusC:  [ 0.50, 0.365, -0.80],
+    minusA: [-0.10, 0.365, -0.20],
+    minusB: [ 0.20, 0.365, -0.20],
+    minusC: [ 0.50, 0.365, -0.20],
   },
   // Battery terminals on top of pack (snap connector)
   bat: {
-    plus:  [0.93, 1.08, 0.85],
-    minus: [1.07, 1.08, 0.85],
+    plus:  [1.13, 0.64, 0.80],
+    minus: [1.27, 0.64, 0.80],
   },
 };
 
@@ -306,14 +337,14 @@ function MotorWires({ visible, opacity = 1 }) {
   if (!visible) return null;
   return (
     <group>
-      {/* OUT1 (+) → Right motor lead A (red) */}
-      <CurvedWire start={PINS.l298n.out1} end={PINS.mot.rightA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
-      {/* OUT2 (−) → Right motor lead B (black) */}
-      <CurvedWire start={PINS.l298n.out2} end={PINS.mot.rightB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
-      {/* OUT3 (+) → Left motor lead A (red) */}
-      <CurvedWire start={PINS.l298n.out3} end={PINS.mot.leftA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
-      {/* OUT4 (−) → Left motor lead B (black) */}
-      <CurvedWire start={PINS.l298n.out4} end={PINS.mot.leftB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
+      {/* OUT1 → Left motor lead A (red) */}
+      <CurvedWire start={PINS.l298n.out1} end={PINS.mot.leftA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
+      {/* OUT2 → Left motor lead B (black) */}
+      <CurvedWire start={PINS.l298n.out2} end={PINS.mot.leftB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
+      {/* OUT3 → Right motor lead A (red) */}
+      <CurvedWire start={PINS.l298n.out3} end={PINS.mot.rightA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
+      {/* OUT4 → Right motor lead B (black) */}
+      <CurvedWire start={PINS.l298n.out4} end={PINS.mot.rightB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
     </group>
   );
 }
@@ -346,10 +377,18 @@ function ControlWires({ visible, opacity = 1 }) {
   if (!visible) return null;
   return (
     <group>
-      <CurvedWire start={PINS.ard.d5} end={PINS.l298n.in1} color="#A855F7" visible arcHeight={0.55} opacity={opacity} />
-      <CurvedWire start={PINS.ard.d6} end={PINS.l298n.in2} color="#22C55E" visible arcHeight={0.52} opacity={opacity} />
-      <CurvedWire start={PINS.ard.d7} end={PINS.l298n.in3} color="#3B82F6" visible arcHeight={0.50} opacity={opacity} />
-      <CurvedWire start={PINS.ard.d8} end={PINS.l298n.in4} color="#F97316" visible arcHeight={0.48} opacity={opacity} />
+      {/* ENA ↔ D5 (PWM) */}
+      <CurvedWire start={PINS.ard.d5}  end={PINS.l298n.ena} color="#A855F7" visible arcHeight={0.58} opacity={opacity} />
+      {/* ENB ↔ D6 (PWM) */}
+      <CurvedWire start={PINS.ard.d6}  end={PINS.l298n.enb} color="#22C55E" visible arcHeight={0.55} opacity={opacity} />
+      {/* IN1 ↔ D8 */}
+      <CurvedWire start={PINS.ard.d8}  end={PINS.l298n.in1} color="#3B82F6" visible arcHeight={0.52} opacity={opacity} />
+      {/* IN2 ↔ D9 */}
+      <CurvedWire start={PINS.ard.d9}  end={PINS.l298n.in2} color="#F97316" visible arcHeight={0.50} opacity={opacity} />
+      {/* IN3 ↔ D10 */}
+      <CurvedWire start={PINS.ard.d10} end={PINS.l298n.in3} color="#EC4899" visible arcHeight={0.48} opacity={opacity} />
+      {/* IN4 ↔ D11 */}
+      <CurvedWire start={PINS.ard.d11} end={PINS.l298n.in4} color="#14B8A6" visible arcHeight={0.46} opacity={opacity} />
     </group>
   );
 }
@@ -357,16 +396,20 @@ function ControlWires({ visible, opacity = 1 }) {
 // ─── Power wiring ────────────────────────────────────────────────────────────
 //   Battery +  → L298N 12V
 //   Battery −  → L298N GND
-//   L298N 5V   → Arduino 5V
-//   L298N GND  → Arduino GND (shared ground is required for signal integrity)
+//   Arduino VIN → Battery +  (Arduino powered from battery, 7–12V)
+//   Arduino GND → L298N GND  (common ground required for signal integrity)
 function PowerWires({ visible, opacity = 1 }) {
   if (!visible) return null;
   return (
     <group>
+      {/* Battery + → L298N +12V */}
       <CurvedWire start={PINS.bat.plus}   end={PINS.l298n.v12}  color="#EF4444" visible arcHeight={0.85} opacity={opacity} />
+      {/* Battery − → L298N GND */}
       <CurvedWire start={PINS.bat.minus}  end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.75} opacity={opacity} />
-      <CurvedWire start={PINS.l298n.v5}   end={PINS.ard.v5}     color="#EF4444" visible arcHeight={0.45} opacity={opacity} />
-      <CurvedWire start={PINS.l298n.gnd2} end={PINS.ard.gnd}    color="#0A0A0A" visible arcHeight={0.40} opacity={opacity} />
+      {/* Arduino VIN → Battery + (7–12V supply) */}
+      <CurvedWire start={PINS.ard.vin}    end={PINS.bat.plus}   color="#EF4444" visible arcHeight={0.60} opacity={opacity} />
+      {/* Arduino GND → L298N GND (common ground) */}
+      <CurvedWire start={PINS.ard.gnd}    end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.40} opacity={opacity} />
     </group>
   );
 }
@@ -396,14 +439,14 @@ function Track({ visible }) {
 }
 
 const HIGHLIGHT_MAP = {
-  chassis:    { position: [0, 0.3, 0],        size: [4.2, 0.45, 2.65] },
+  chassis:    { position: [0, 0.27, 0],       size: [4.45, 0.34, 4.45] },
   motor:      { position: [1.45, 0.32, 0],    size: [1.7, 0.75, 3.3] },
-  castor:     { position: [-2.25, 0.18, 0],   size: [0.5, 0.6, 0.55] },
-  arduino:    { position: [0.5, 0.45, 0.4],   size: [1.35, 0.3, 1.15] },
-  breadboard: { position: [0.3, 0.42, -0.8],  size: [0.95, 0.22, 0.95] },
-  l298n:      { position: [-1.0, 0.62, 0.1],  size: [1.05, 0.52, 1.15] },
-  ir:         { position: [-2.15, 0.2, 0],    size: [0.9, 0.35, 1.8] },
-  battery:    { position: [1.0, 0.76, 0.85],  size: [0.5, 0.8, 0.4] },
+  castor:     { position: [-2.12, 0.12, 0],   size: [0.55, 0.45, 0.55] },
+  arduino:    { position: [0.2, 0.41, 0.1],    size: [1.35, 0.3, 1.15] },
+  breadboard: { position: [1.25, 0.34, 0.1],  size: [0.95, 0.22, 0.95] },
+  l298n:      { position: [-1.0, 0.45, 0.1],  size: [1.05, 0.52, 1.15] },
+  ir:         { position: [-2.15, 0.30, 0],   size: [0.9, 0.35, 1.8] },
+  battery:    { position: [1.2, 0.56, 0.8],   size: [0.5, 0.8, 0.4] },
 };
 
 function CameraController({ targetPosition, targetLookAt }) {
