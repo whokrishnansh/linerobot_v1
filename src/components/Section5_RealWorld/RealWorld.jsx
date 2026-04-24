@@ -33,23 +33,22 @@ const CARD_POSITIONS = [
   { top: 1045, left: 'calc(50% - 310px)' }, // left side (before finale)
 ];
 
+const ROBOT_MARKER_IMAGE = '/robot_png.png';
+const ROBOT_FORWARD_OFFSET_DEG = -90;
+
 // ─── Robot drawn inside SVG coordinate space ──────────────────────────────────
 function RobotMarker({ x, y, angle }) {
   return (
-    <g transform={`translate(${x},${y}) rotate(${angle})`}>
-      {/* Chassis body */}
-      <rect x="-19" y="-13" width="38" height="26" rx="5" fill="#7C3AED" />
-      {/* Arduino chip */}
-      <rect x="-10" y="-9" width="20" height="13" rx="2" fill="#006B3F" />
-      {/* Wheels */}
-      <rect x="-22" y="-9" width="7" height="18" rx="3" fill="#111827" />
-      <rect x="15" y="-9" width="7" height="18" rx="3" fill="#111827" />
-      {/* IR sensors */}
-      <circle cx="-7" cy="14" r="3.5" fill="#22C55E" />
-      <circle cx="7" cy="14" r="3.5" fill="#22C55E" />
-      {/* Castor */}
-      <circle cx="-5" cy="-17" r="3.5" fill="#9CA3AF" />
-      <circle cx="5" cy="-17" r="3.5" fill="#9CA3AF" />
+    <g transform={`translate(${x},${y}) rotate(${angle + ROBOT_FORWARD_OFFSET_DEG})`}>
+      <image
+        href={ROBOT_MARKER_IMAGE}
+        xlinkHref={ROBOT_MARKER_IMAGE}
+        x={-32}
+        y={-32}
+        width={64}
+        height={64}
+        preserveAspectRatio="xMidYMid meet"
+      />
     </g>
   );
 }
@@ -60,7 +59,7 @@ function FlipCard({ useCase, isRevealed, isNext, index }) {
     <div
       style={{
         width: 300,
-        height: 160,
+        height: 172,
         perspective: 800,
       }}
     >
@@ -151,7 +150,7 @@ function FlipCard({ useCase, isRevealed, isNext, index }) {
             borderRadius: 12,
             background: useCase.dark ? '#0A0A0A' : 'white',
             border: useCase.dark ? 'none' : '1px solid rgba(10,10,10,0.08)',
-            padding: '18px 20px',
+            padding: '18px 20px 32px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
             display: 'flex',
             flexDirection: 'column',
@@ -232,7 +231,7 @@ export default function RealWorld() {
       const len = robotProgress * totalLen;
       const pt = path.getPointAtLength(Math.min(len, totalLen));
       const pt2 = path.getPointAtLength(Math.min(len + 4, totalLen));
-      const angle = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * (180 / Math.PI) + 90;
+      const angle = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * (180 / Math.PI);
       setRobotPos({ x: pt.x, y: pt.y, angle });
     } catch {
       // Ignore if path not ready
