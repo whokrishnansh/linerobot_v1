@@ -9,35 +9,42 @@ const TABS = [
 ];
 
 const VIEW_BOXES = {
-  sensor: '30 80 380 360',
-  motor: '380 60 400 400',
-  power: '40 60 720 460',
-  full: '0 0 760 520',
+  sensor: [760, 70, 420, 360],
+  motor: [0, 120, 840, 500],
+  power: [180, 0, 760, 430],
+  full: [0, 0, 1200, 760],
 };
 
 // Sensor wires
 const SENSOR_WIRES = [
-  { d: 'M 170 145 Q 240 145 310 210', color: '#22C55E', id: 'sw1' },
-  { d: 'M 170 155 Q 250 155 310 230', color: '#0A0A0A', id: 'sw2' },
-  { d: 'M 170 165 Q 260 165 310 250', color: '#FBBF24', id: 'sw3' },
-  { d: 'M 170 345 Q 240 345 310 270', color: '#22C55E', id: 'sw4' },
-  { d: 'M 170 355 Q 250 355 310 295', color: '#0A0A0A', id: 'sw5' },
-  { d: 'M 170 365 Q 260 365 310 315', color: '#FBBF24', id: 'sw6' },
+  { d: 'M 960 130 C 930 130 900 205 790 240', color: '#EF4444', id: 'sw1' },
+  { d: 'M 960 152 C 930 152 900 225 790 260', color: '#0A0A0A', id: 'sw2' },
+  { d: 'M 960 174 C 930 174 900 245 790 280', color: '#FBBF24', id: 'sw3' },
+  { d: 'M 960 300 C 930 300 900 300 790 300', color: '#EF4444', id: 'sw4' },
+  { d: 'M 960 322 C 930 322 900 320 790 320', color: '#0A0A0A', id: 'sw5' },
+  { d: 'M 960 344 C 930 344 900 340 790 340', color: '#FBBF24', id: 'sw6' },
 ];
 
 const MOTOR_WIRES = [
-  { d: 'M 470 225 Q 555 190 640 190', color: '#4F46E5', id: 'mw1' },
-  { d: 'M 470 245 Q 555 215 640 215', color: '#4F46E5', id: 'mw2' },
-  { d: 'M 470 265 Q 555 255 640 255', color: '#4F46E5', id: 'mw3' },
-  { d: 'M 470 285 Q 555 285 640 285', color: '#4F46E5', id: 'mw4' },
-  { d: 'M 640 165 Q 590 130 535 115', color: '#374151', id: 'mw5' },
-  { d: 'M 640 330 Q 590 380 535 410', color: '#374151', id: 'mw6' },
+  { d: 'M 150 420 C 250 455 430 488 540 500', color: '#A855F7', id: 'mw1' },
+  { d: 'M 180 420 C 280 462 460 495 570 506', color: '#22C55E', id: 'mw2' },
+  { d: 'M 210 420 C 310 468 490 500 600 512', color: '#3B82F6', id: 'mw3' },
+  { d: 'M 240 420 C 340 474 520 504 630 518', color: '#F97316', id: 'mw4' },
+  { d: 'M 270 420 C 370 478 550 508 660 524', color: '#EC4899', id: 'mw5' },
+  { d: 'M 300 420 C 400 482 580 512 690 530', color: '#14B8A6', id: 'mw6' },
+  { d: 'M 120 300 C 95 260 115 188 192 132', color: '#22C55E', id: 'mw7' },
+  { d: 'M 120 322 C 88 298 110 220 192 148', color: '#FBBF24', id: 'mw8' },
+  { d: 'M 340 300 C 390 340 390 520 300 575 C 255 590 220 585 192 565', color: '#22C55E', id: 'mw9' },
+  { d: 'M 340 322 C 395 365 395 540 312 595 C 262 610 225 605 192 585', color: '#FBBF24', id: 'mw10' },
 ];
 
 const POWER_WIRES = [
-  { d: 'M 120 450 Q 380 450 640 220', color: '#EF4444', id: 'pw1' },
-  { d: 'M 120 480 Q 380 480 640 290', color: '#0A0A0A', id: 'pw2' },
-  { d: 'M 640 165 Q 560 130 470 210', color: '#EF4444', id: 'pw3' },
+  { d: 'M 520 122 C 520 200 380 220 260 250', color: '#EF4444', id: 'pw1' },
+  { d: 'M 560 122 C 560 210 430 225 300 250', color: '#0A0A0A', id: 'pw2' },
+  { d: 'M 520 122 C 538 300 465 440 555 500', color: '#EF4444', id: 'pw3' },
+  { d: 'M 795 490 C 760 420 520 310 300 250', color: '#0A0A0A', id: 'pw4' },
+  { d: 'M 560 500 C 560 560 560 590 560 616', color: '#EF4444', id: 'pw5' },
+  { d: 'M 740 500 C 740 566 740 606 740 636', color: '#0A0A0A', id: 'pw6' },
 ];
 
 const ALL_WIRE_GROUPS = { sensor: SENSOR_WIRES, motor: MOTOR_WIRES, power: POWER_WIRES };
@@ -112,7 +119,7 @@ function TabBody({ tab }) {
         { from: 'OUT', to: 'Arduino D3', color: '#FBBF24' },
       ]} />
       <ClassroomNote>
-        Breadboard carries one shared VCC and GND rail. Both sensors tap into it — you don't need separate wires to the Arduino for each one's power.
+        Arduino 5V and GND feed the breadboard rails, and both IR sensors tap into those shared rails. Only the OUT wires go directly to Arduino pins.
       </ClassroomNote>
     </div>
   );
@@ -125,18 +132,20 @@ function TabBody({ tab }) {
       </div>
       <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0A0A0A', marginBottom: 10 }}>How the robot moves</h3>
       <p style={{ fontSize: 13.5, color: '#525252', lineHeight: 1.6, marginBottom: 14 }}>
-        Arduino sends four signals to the L298N — two per motor. Different combinations make each wheel spin
-        forward, backward, or stop. That's how the robot turns: one wheel runs while the other pauses.
+        Arduino sends six control lines to the L298N: ENA/ENB for speed (PWM) and IN1-IN4 for direction.
+        L298N then drives OUT1-OUT4 to spin each motor forward or reverse.
       </p>
-      <PinCard title="Arduino → L298N (control) · 4 wires" rows={[
-        { from: 'D5', to: 'IN1', color: '#4F46E5' },
-        { from: 'D6', to: 'IN2', color: '#4F46E5' },
-        { from: 'D7', to: 'IN3', color: '#4F46E5' },
-        { from: 'D8', to: 'IN4', color: '#4F46E5' },
+      <PinCard title="Arduino → L298N (control) · 6 wires" rows={[
+        { from: 'D5 (PWM)', to: 'ENA', color: '#A855F7' },
+        { from: 'D6 (PWM)', to: 'ENB', color: '#22C55E' },
+        { from: 'D8', to: 'IN1', color: '#3B82F6' },
+        { from: 'D9', to: 'IN2', color: '#F97316' },
+        { from: 'D10', to: 'IN3', color: '#EC4899' },
+        { from: 'D11', to: 'IN4', color: '#14B8A6' },
       ]} />
       <PinCard title="L298N → motors · 4 wires" rows={[
-        { from: 'OUT1/OUT2', to: 'Right motor', color: '#374151' },
-        { from: 'OUT3/OUT4', to: 'Left motor', color: '#374151' },
+        { from: 'OUT1 + OUT2', to: 'Left motor', color: '#22C55E' },
+        { from: 'OUT3 + OUT4', to: 'Right motor', color: '#FBBF24' },
       ]} />
       <ClassroomNote>
         If the robot moves backward, swap the two motor wires at the L298N output — it flips the spin direction without changing any code.
@@ -152,16 +161,18 @@ function TabBody({ tab }) {
       </div>
       <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0A0A0A', marginBottom: 10 }}>Where the energy flows</h3>
       <p style={{ fontSize: 13.5, color: '#525252', lineHeight: 1.6, marginBottom: 14 }}>
-        The 9V battery powers the motor driver. The motor driver has a built-in 5V regulator that powers
-        the Arduino, which in turn powers the sensors. One battery, one current path.
+        The battery powers both the L298N (+12V/GND) and Arduino VIN directly. Arduino 5V and GND then
+        feed the breadboard rails for sensors. All grounds must be common.
       </p>
-      <PinCard title="Battery → L298N" rows={[
-        { from: '9V+', to: '12V terminal', color: '#EF4444' },
-        { from: '9V-', to: 'GND terminal', color: '#0A0A0A' },
+      <PinCard title="Battery and supply lines" rows={[
+        { from: 'Battery +', to: 'L298N +12V', color: '#EF4444' },
+        { from: 'Battery -', to: 'L298N GND', color: '#0A0A0A' },
+        { from: 'Battery +', to: 'Arduino VIN', color: '#EF4444' },
       ]} />
-      <PinCard title="L298N → Arduino (shared ground)" rows={[
-        { from: '5V out', to: 'Arduino VIN', color: '#EF4444' },
-        { from: 'GND', to: 'Arduino GND', color: '#0A0A0A' },
+      <PinCard title="Breadboard and ground" rows={[
+        { from: 'Arduino 5V', to: 'Breadboard + rail', color: '#EF4444' },
+        { from: 'Arduino GND', to: 'Breadboard - rail', color: '#0A0A0A' },
+        { from: 'Arduino GND', to: 'L298N GND', color: '#0A0A0A' },
       ]} />
       <ClassroomNote color="#EF4444">
         Double-check every connection before plugging in the battery. A shorted wire can permanently damage the Arduino or the motor driver.
@@ -178,6 +189,7 @@ export default function CircuitLab() {
   const [viewBox, setViewBox] = useState(VIEW_BOXES.full);
   const [animateSignals, setAnimateSignals] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [showConnectionInfo, setShowConnectionInfo] = useState(false);
   const svgRef = useRef(null);
 
   useEffect(() => {
@@ -279,6 +291,26 @@ export default function CircuitLab() {
               Animate signals
             </button>
 
+            <button
+              onClick={() => setShowConnectionInfo(true)}
+              style={{
+                position: 'absolute',
+                bottom: 14,
+                right: 14,
+                zIndex: 10,
+                background: 'white',
+                color: '#0A0A0A',
+                border: '1px solid rgba(10,10,10,0.12)',
+                borderRadius: 8,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}
+            >
+              Connection info
+            </button>
+
             {/* SVG Circuit diagram */}
             <svg
               ref={svgRef}
@@ -295,7 +327,7 @@ export default function CircuitLab() {
                   <circle cx="8" cy="8" r="0.8" fill="rgba(10,10,10,0.08)" />
                 </pattern>
               </defs>
-              <rect width="760" height="520" fill="url(#dots)" />
+              <rect width="1200" height="760" fill="url(#dots)" />
 
               {/* Render wires for each subsystem */}
               {Object.entries(ALL_WIRE_GROUPS).map(([sub, wires]) =>
@@ -307,7 +339,7 @@ export default function CircuitLab() {
                       strokeWidth={activeTab === sub ? 3.5 : 2.5}
                       strokeLinecap="round"
                       fill="none"
-                      opacity={activeTab === sub ? 1 : 0.1}
+                      opacity={activeTab === sub ? 1 : 0.24}
                       style={{ transition: 'opacity 400ms, stroke-width 400ms' }}
                     />
                     {animateSignals && activeTab === sub && (
@@ -319,64 +351,72 @@ export default function CircuitLab() {
                 ))
               )}
 
-              {/* Left IR sensor */}
-              <rect x="80" y="110" width="90" height="90" rx="6" fill="#1E40AF" />
-              <circle cx="112" cy="155" r="14" fill="#0A0A0A" /><circle cx="112" cy="155" r="7" fill="#B87333" />
-              <circle cx="138" cy="155" r="14" fill="#0A0A0A" /><circle cx="138" cy="155" r="7" fill="#B87333" />
-              <text x="125" y="108" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono" fill="#4F46E5" fontWeight="500">LEFT IR</text>
-              <rect x="100" y="196" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <rect x="114" y="196" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <rect x="128" y="196" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <text x="96" y="220" fontSize="7" fontFamily="JetBrains Mono" fill="#A1A1A1">VCC GND OUT</text>
+              {/* Battery pack */}
+              <rect x="430" y="14" width="220" height="120" rx="10" fill="#F5F3FF" stroke="#7E22CE" strokeWidth="2" />
+              <text x="540" y="44" textAnchor="middle" fontSize="24" fontFamily="Inter" fill="#1F2937" fontWeight="700">BATTERY PACK</text>
+              <text x="540" y="74" textAnchor="middle" fontSize="20" fontFamily="Inter" fill="#374151">7.4V - 12V</text>
+              <rect x="490" y="86" width="100" height="36" rx="3" fill="#FFFFFF" stroke="#111827" strokeWidth="2" />
+              <text x="520" y="112" textAnchor="middle" fontSize="30" fill="#DC2626" fontWeight="700">+</text>
+              <text x="560" y="112" textAnchor="middle" fontSize="30" fill="#111827" fontWeight="700">−</text>
 
-              {/* Right IR sensor */}
-              <rect x="80" y="310" width="90" height="90" rx="6" fill="#1E40AF" />
-              <circle cx="112" cy="355" r="14" fill="#0A0A0A" /><circle cx="112" cy="355" r="7" fill="#B87333" />
-              <circle cx="138" cy="355" r="14" fill="#0A0A0A" /><circle cx="138" cy="355" r="7" fill="#B87333" />
-              <text x="125" y="308" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono" fill="#4F46E5" fontWeight="500">RIGHT IR</text>
-              <rect x="100" y="396" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <rect x="114" y="396" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <rect x="128" y="396" width="8" height="16" rx="1" fill="#B8B8B8" />
-              <text x="96" y="420" fontSize="7" fontFamily="JetBrains Mono" fill="#A1A1A1">VCC GND OUT</text>
+              {/* L298N board */}
+              <rect x="120" y="220" width="220" height="320" rx="6" fill="#DC2626" stroke="#991B1B" strokeWidth="2" />
+              <rect x="140" y="250" width="120" height="26" rx="2" fill="#111827" />
+              <text x="230" y="358" textAnchor="middle" fontSize="40" fontFamily="Inter" fill="#FDE68A" fontWeight="700">L298N</text>
+              <text x="190" y="244" textAnchor="middle" fontSize="16" fontFamily="JetBrains Mono" fill="#FCA5A5">+12V   GND</text>
+              <text x="160" y="300" fontSize="15" fontFamily="JetBrains Mono" fill="#FFFFFF">OUT1</text>
+              <text x="160" y="322" fontSize="15" fontFamily="JetBrains Mono" fill="#FFFFFF">OUT2</text>
+              <text x="280" y="300" fontSize="15" fontFamily="JetBrains Mono" fill="#FFFFFF">OUT3</text>
+              <text x="280" y="322" fontSize="15" fontFamily="JetBrains Mono" fill="#FFFFFF">OUT4</text>
+              <text x="148" y="418" fontSize="15" fontFamily="JetBrains Mono" fill="#FEE2E2">ENA IN1 IN2 IN3 IN4 ENB</text>
+
+              {/* Motors */}
+              <rect x="24" y="100" width="130" height="70" rx="10" fill="#FACC15" stroke="#CA8A04" strokeWidth="2" />
+              <text x="89" y="141" textAnchor="middle" fontSize="12" fontFamily="Inter" fill="#111827" fontWeight="600">LEFT MOTOR</text>
+              <rect x="154" y="110" width="38" height="50" rx="4" fill="#9CA3AF" stroke="#4B5563" strokeWidth="2" />
+
+              <rect x="24" y="550" width="130" height="70" rx="10" fill="#FACC15" stroke="#CA8A04" strokeWidth="2" />
+              <text x="89" y="591" textAnchor="middle" fontSize="12" fontFamily="Inter" fill="#111827" fontWeight="600">RIGHT MOTOR</text>
+              <rect x="154" y="560" width="38" height="50" rx="4" fill="#9CA3AF" stroke="#4B5563" strokeWidth="2" />
 
               {/* Arduino UNO */}
-              <rect x="310" y="200" width="160" height="120" rx="6" fill="#006B3F" />
-              <rect x="322" y="212" width="60" height="48" rx="3" fill="#004D2D" />
-              <rect x="390" y="212" width="50" height="20" rx="2" fill="#004D2D" />
-              <rect x="326" y="252" width="52" height="14" rx="2" fill="#004D2D" />
-              <circle cx="452" cy="220" r="5" fill="#F59E0B" />
-              <text x="390" y="198" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono" fill="#22C55E" fontWeight="500">ARDUINO UNO</text>
-              <text x="316" y="310" fontSize="7" fontFamily="JetBrains Mono" fill="#86EFAC">5V D2 D3 GND</text>
-              <text x="398" y="310" fontSize="7" fontFamily="JetBrains Mono" fill="#86EFAC">D5 D6 D7 D8</text>
+              <rect x="430" y="220" width="420" height="300" rx="8" fill="#1D4ED8" stroke="#1E3A8A" strokeWidth="2" />
+              <rect x="438" y="238" width="88" height="95" rx="5" fill="#9CA3AF" />
+              <rect x="530" y="240" width="240" height="22" rx="4" fill="#1F2937" />
+              <rect x="528" y="480" width="230" height="22" rx="4" fill="#1F2937" />
+              <rect x="772" y="262" width="64" height="216" rx="4" fill="#1F2937" />
+              <rect x="585" y="370" width="180" height="56" rx="6" fill="#111827" />
+              <text x="642" y="355" textAnchor="middle" fontSize="38" fontFamily="Inter" fill="#E5E7EB" fontWeight="700">UNO</text>
+              <text x="590" y="330" textAnchor="middle" fontSize="38" fontFamily="Inter" fill="#E5E7EB" fontWeight="700">ARDUINO</text>
+              <text x="685" y="264" textAnchor="middle" fontSize="13" fontFamily="JetBrains Mono" fill="#F9FAFB">DIGITAL (PWM~)</text>
+              <text x="660" y="498" textAnchor="middle" fontSize="13" fontFamily="JetBrains Mono" fill="#F9FAFB">POWER</text>
 
-              {/* L298N */}
-              <rect x="620" y="140" width="110" height="220" rx="6" fill="#DC2626" />
-              <rect x="630" y="155" width="50" height="50" rx="3" fill="#0A0A0A" />
-              <rect x="650" y="150" width="10" height="8" rx="1" fill="#374151" />
-              <rect x="660" y="150" width="10" height="8" rx="1" fill="#374151" />
-              <rect x="630" y="340" width="30" height="10" rx="2" fill="#1E3A8A" />
-              <rect x="665" y="340" width="30" height="10" rx="2" fill="#1E3A8A" />
-              <text x="675" y="138" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono" fill="#FCA5A5" fontWeight="500">L298N</text>
-              <text x="626" y="220" fontSize="7" fontFamily="JetBrains Mono" fill="#FCA5A5">IN1</text>
-              <text x="626" y="235" fontSize="7" fontFamily="JetBrains Mono" fill="#FCA5A5">IN2</text>
-              <text x="626" y="250" fontSize="7" fontFamily="JetBrains Mono" fill="#FCA5A5">IN3</text>
-              <text x="626" y="265" fontSize="7" fontFamily="JetBrains Mono" fill="#FCA5A5">IN4</text>
+              {/* IR sensors on right */}
+              <text x="1060" y="100" textAnchor="middle" fontSize="24" fontFamily="Inter" fill="#111827" fontWeight="700">IR SENSOR - LEFT</text>
+              <rect x="960" y="112" width="190" height="78" rx="6" fill="#2563EB" stroke="#1E3A8A" strokeWidth="2" />
+              <rect x="968" y="124" width="90" height="54" rx="3" fill="#1D4ED8" />
+              <circle cx="1130" cy="132" r="12" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="2" />
+              <circle cx="1130" cy="170" r="12" fill="#111827" stroke="#6B7280" strokeWidth="2" />
+              <text x="968" y="130" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">VCC</text>
+              <text x="968" y="152" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">GND</text>
+              <text x="968" y="174" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">OUT</text>
 
-              {/* Right motor */}
-              <rect x="500" y="80" width="100" height="55" rx="6" fill="#374151" />
-              <circle cx="570" cy="107" r="20" fill="#1F2937" /><circle cx="570" cy="107" r="8" fill="#4B5563" />
-              <text x="540" y="76" textAnchor="middle" fontSize="8" fontFamily="JetBrains Mono" fill="#9CA3AF">RIGHT MOTOR</text>
+              <text x="1060" y="270" textAnchor="middle" fontSize="24" fontFamily="Inter" fill="#111827" fontWeight="700">IR SENSOR - RIGHT</text>
+              <rect x="960" y="282" width="190" height="78" rx="6" fill="#2563EB" stroke="#1E3A8A" strokeWidth="2" />
+              <rect x="968" y="294" width="90" height="54" rx="3" fill="#1D4ED8" />
+              <circle cx="1130" cy="302" r="12" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="2" />
+              <circle cx="1130" cy="340" r="12" fill="#111827" stroke="#6B7280" strokeWidth="2" />
+              <text x="968" y="300" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">VCC</text>
+              <text x="968" y="322" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">GND</text>
+              <text x="968" y="344" fontSize="14" fontFamily="JetBrains Mono" fill="#111827">OUT</text>
 
-              {/* Left motor */}
-              <rect x="500" y="385" width="100" height="55" rx="6" fill="#374151" />
-              <circle cx="570" cy="412" r="20" fill="#1F2937" /><circle cx="570" cy="412" r="8" fill="#4B5563" />
-              <text x="540" y="380" textAnchor="middle" fontSize="8" fontFamily="JetBrains Mono" fill="#9CA3AF">LEFT MOTOR</text>
+              {/* Breadboard */}
+              <rect x="380" y="590" width="460" height="130" rx="8" fill="#F3F4F6" stroke="#2563EB" strokeWidth="2" />
+              <line x1="395" y1="616" x2="825" y2="616" stroke="#DC2626" strokeWidth="3" />
+              <line x1="395" y1="636" x2="825" y2="636" stroke="#2563EB" strokeWidth="3" />
+              <text x="388" y="614" fontSize="32" fill="#DC2626">+</text>
+              <text x="388" y="639" fontSize="28" fill="#2563EB">−</text>
 
-              {/* 9V Battery */}
-              <rect x="60" y="440" width="70" height="50" rx="5" fill="#16A34A" />
-              <text x="95" y="460" textAnchor="middle" fontSize="10" fill="white" fontWeight="600">9V</text>
-              <rect x="128" y="452" width="8" height="10" rx="2" fill="#9CA3AF" />
-              <text x="65" y="502" fontSize="8" fontFamily="JetBrains Mono" fill="#A1A1A1">BATTERY</text>
             </svg>
 
             {/* Color legend */}
@@ -394,10 +434,10 @@ export default function CircuitLab() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
             }}>
               {[
-                { color: '#22C55E', label: 'VCC' },
-                { color: '#0A0A0A', label: 'GND' },
-                { color: '#FBBF24', label: 'Signal' },
-                { color: '#EF4444', label: 'Power' },
+                { color: '#EF4444', label: 'Power (5V/12V)' },
+                { color: '#0A0A0A', label: 'Ground (GND)' },
+                { color: '#FBBF24', label: 'Signal / Data' },
+                { color: '#22C55E', label: 'Motor wires' },
               ].map(({ color, label }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <div style={{ width: 14, height: 2.5, background: color, borderRadius: 1 }} />
@@ -405,6 +445,79 @@ export default function CircuitLab() {
                 </div>
               ))}
             </div>
+
+            {showConnectionInfo && (
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 30,
+                  background: 'rgba(10,10,10,0.42)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 16,
+                }}
+                onClick={() => setShowConnectionInfo(false)}
+              >
+                <div
+                  style={{
+                    width: 'min(640px, 96%)',
+                    background: 'white',
+                    borderRadius: 14,
+                    border: '1px solid rgba(10,10,10,0.08)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+                    padding: 18,
+                  }}
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>Connection Info</div>
+                    <button
+                      onClick={() => setShowConnectionInfo(false)}
+                      style={{
+                        border: '1px solid rgba(10,10,10,0.15)',
+                        background: 'white',
+                        borderRadius: 8,
+                        padding: '4px 10px',
+                        cursor: 'pointer',
+                        fontSize: 12,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    <div style={{ background: '#F9FAFB', border: '1px solid #DBEAFE', borderRadius: 10, padding: 12 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', marginBottom: 8 }}>L298N ↔ Arduino Connections</div>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#1F2937', lineHeight: 1.65 }}>
+                        ENA → D5 (PWM)<br />
+                        ENB → D6 (PWM)<br />
+                        IN1 → D8<br />
+                        IN2 → D9<br />
+                        IN3 → D10<br />
+                        IN4 → D11
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#F9FAFB', border: '1px solid #DBEAFE', borderRadius: 10, padding: 12 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', marginBottom: 8 }}>Power Summary</div>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#1F2937', lineHeight: 1.65 }}>
+                        Battery + → L298N +12V<br />
+                        Battery − → L298N GND<br />
+                        Arduino VIN → Battery + (7-12V)<br />
+                        Arduino GND → Common GND<br />
+                        Arduino 5V → Breadboard + rail<br />
+                        Arduino GND → Breadboard − rail<br />
+                        All GNDs must be common
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
