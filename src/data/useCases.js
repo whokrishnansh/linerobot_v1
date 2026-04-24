@@ -9,6 +9,8 @@ export const USE_CASES = [
       { value: '750k+', label: 'Robots active' },
       { value: '24/7', label: 'Operating' },
     ],
+    thumbnail: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80',
+    thumbnailPosition: 'center 48%',
     dark: false,
   },
   {
@@ -21,6 +23,8 @@ export const USE_CASES = [
       { value: '500+', label: 'Per plant' },
       { value: '1930s', label: 'First AGV' },
     ],
+    thumbnail: 'https://unsplash.com/photos/8gr6bObQLOI/download?force=true&w=1200&v=toyota-factory-3',
+    thumbnailPosition: 'center 46%',
     dark: false,
   },
   {
@@ -33,6 +37,8 @@ export const USE_CASES = [
       { value: '~30%', label: 'Faster delivery' },
       { value: '18h', label: 'Per day active' },
     ],
+    thumbnail: 'https://unsplash.com/photos/_9vLJxxHrBo/download?force=true&w=1200&v=hospital-robot-2',
+    thumbnailPosition: 'center 42%',
     dark: false,
   },
   {
@@ -45,6 +51,8 @@ export const USE_CASES = [
       { value: '40%', label: 'Less spray used' },
       { value: '10×', label: 'vs. manual' },
     ],
+    thumbnail: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1200&q=80',
+    thumbnailPosition: 'center 52%',
     dark: false,
   },
   {
@@ -57,6 +65,8 @@ export const USE_CASES = [
       { value: 'Tesla', label: 'Autopilot' },
       { value: 'Waymo', label: 'Full self-driving' },
     ],
+    thumbnail: 'https://unsplash.com/photos/cp-IWd2-STM/download?force=true&w=1200&v=driverless-car-3',
+    thumbnailPosition: 'center 50%',
     dark: true,
   },
 ];

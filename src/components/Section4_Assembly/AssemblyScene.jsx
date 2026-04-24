@@ -96,6 +96,7 @@ function GLBUniformModel({ url, position = [0, 0, 0], fit = 1, rotation = [0, 0,
 
 // ─── Arced wire helper ───────────────────────────────────────────────────────
 const WIRE_RADIUS = 0.010;
+const TERMINAL_RADIUS = 0.028; // small "plug/connector" sphere at each wire end
 function CurvedWire({ start, end, color, visible, arcHeight = 0.7, arcBias = 0.5, opacity = 1 }) {
   const geometry = useMemo(() => {
     const s = new THREE.Vector3(...start);
@@ -112,15 +113,40 @@ function CurvedWire({ start, end, color, visible, arcHeight = 0.7, arcBias = 0.5
   if (!visible) return null;
 
   return (
-    <mesh geometry={geometry} renderOrder={opacity < 1 ? 1 : 0}>
-      <meshStandardMaterial
-        color={color}
-        roughness={0.5}
-        transparent={true}
-        opacity={opacity}
-        depthWrite={opacity > 0.98}
-      />
-    </mesh>
+    <group>
+      <mesh geometry={geometry} renderOrder={opacity < 1 ? 1 : 0}>
+        <meshStandardMaterial
+          color={color}
+          roughness={0.5}
+          transparent={true}
+          opacity={opacity}
+          depthWrite={opacity > 0.98}
+        />
+      </mesh>
+      {/* Terminal "plug" at each end so the wire visibly connects to the pad */}
+      <mesh position={start} renderOrder={opacity < 1 ? 1 : 0}>
+        <sphereGeometry args={[TERMINAL_RADIUS, 12, 10]} />
+        <meshStandardMaterial
+          color="#1F2937"
+          roughness={0.65}
+          metalness={0.2}
+          transparent={true}
+          opacity={opacity}
+          depthWrite={opacity > 0.98}
+        />
+      </mesh>
+      <mesh position={end} renderOrder={opacity < 1 ? 1 : 0}>
+        <sphereGeometry args={[TERMINAL_RADIUS, 12, 10]} />
+        <meshStandardMaterial
+          color="#1F2937"
+          roughness={0.65}
+          metalness={0.2}
+          transparent={true}
+          opacity={opacity}
+          depthWrite={opacity > 0.98}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -269,66 +295,78 @@ function Battery({ visible }) {
 }
 
 // ─── Terminal/pin coordinate tables ──────────────────────────────────────────
-// Defined once so wire endpoints can reference them by name.
+// Pin coordinates match the CURRENT world-space position of each component.
+// Arduino at [0.2, 0.3, 0.1], size [1.2, 0.15, 1.0]  → x∈[-0.4, 0.8], y_top≈0.38, z∈[-0.4, 0.6]
+// L298N   at [-1.0, 0.4, 0.1], size [0.9, 0.36, 1.0] → x∈[-1.45, -0.55], y_top≈0.58, z∈[-0.4, 0.6]
+// Breadboard at [1.25, 0.275, 0.1], size [0.8, 0.1, 0.8] → x∈[0.85, 1.65], y_top≈0.33, z∈[-0.3, 0.5]
+// Motors at [1.45, 0.22, ±1.4], body faces the chassis at x≈1.00
+// IR sensors at [-2.15, 0.19, ±0.55], inner edge at x≈-1.80
+// Battery at [1.2, 0.46, 0.8], snap terminals on top face
 const PINS = {
-  // Arduino pin header runs along the -X edge, y just above board top
+  // Arduino digital header on the -X edge of the board, pins on top surface
   ard: {
-    vin: [-0.35, 0.415, -0.45],
-    v5:  [-0.35, 0.415, -0.35],
-    gnd: [-0.35, 0.415, -0.25],
-    d2:  [-0.35, 0.415, -0.15],
-    d3:  [-0.35, 0.415, -0.05],
-    d5:  [-0.35, 0.415,  0.10],
-    d6:  [-0.35, 0.415,  0.20],
-    d8:  [-0.35, 0.415,  0.35],
-    d9:  [-0.35, 0.415,  0.45],
-    d10: [-0.35, 0.415,  0.55],
-    d11: [-0.35, 0.415,  0.65],
+    vin: [-0.40, 0.39, -0.35],
+    v5:  [-0.40, 0.39, -0.25],
+    gnd: [-0.40, 0.39, -0.15],
+    d2:  [-0.40, 0.39, -0.05],
+    d3:  [-0.40, 0.39,  0.05],
+    d5:  [-0.40, 0.39,  0.15],
+    d6:  [-0.40, 0.39,  0.25],
+    d8:  [-0.40, 0.39,  0.35],
+    d9:  [-0.40, 0.39,  0.45],
+    d10: [-0.40, 0.39,  0.55],
+    d11: [-0.40, 0.39,  0.65],
   },
-  // L298N: OUT screw block on +X edge (facing motors), IN pin header on -X edge
+  // L298N: OUT screw block on +X edge (facing the motors),
+  //        IN/EN pin header on -X edge (facing the Arduino),
+  //        power screw terminals on top-right.
   l298n: {
-    out1: [-0.05, 0.36,  0.28],
-    out2: [-0.05, 0.36,  0.42],
-    out3: [-0.05, 0.36,  0.78],
-    out4: [-0.05, 0.36,  0.92],
-    ena:  [-0.95, 0.48,  0.15],
-    in1:  [-0.95, 0.48,  0.30],
-    in2:  [-0.95, 0.48,  0.45],
-    in3:  [-0.95, 0.48,  0.60],
-    in4:  [-0.95, 0.48,  0.75],
-    enb:  [-0.95, 0.48,  0.90],
-    v12:  [-0.80, 0.34,  1.15],
-    gnd1: [-0.60, 0.34,  1.15],
+    // OUT screw block sits low on the +X edge (at PCB level, not above)
+    out1: [-0.55, 0.32, -0.32],
+    out2: [-0.55, 0.32, -0.18],
+    out3: [-0.55, 0.32,  0.18],
+    out4: [-0.55, 0.32,  0.32],
+    // IN/EN pin-header row is tall — spheres sit at top of pin-headers on the -X edge
+    ena:  [-1.45, 0.44, -0.32],
+    in1:  [-1.45, 0.44, -0.18],
+    in2:  [-1.45, 0.44, -0.05],
+    in3:  [-1.45, 0.44,  0.08],
+    in4:  [-1.45, 0.44,  0.22],
+    enb:  [-1.45, 0.44,  0.36],
+    // Power terminal block on the +Z edge at PCB level
+    v12:  [-1.30, 0.30,  0.55],
+    gnd1: [-1.10, 0.30,  0.55],
   },
-  // Motor wire pads on the body end (opposite shaft)
+  // Motor wire pads — slightly inside the motor body (motor at [1.45, 0.22, ±1.4], body ±0.25 in each axis)
   mot: {
-    rightA: [1.00, 0.30, -1.45],
-    rightB: [1.00, 0.30, -1.35],
-    leftA:  [1.00, 0.30,  1.35],
-    leftB:  [1.00, 0.30,  1.45],
+    leftA:  [1.10, 0.20,  1.30],
+    leftB:  [1.10, 0.20,  1.50],
+    rightA: [1.10, 0.20, -1.50],
+    rightB: [1.10, 0.20, -1.30],
   },
-  // IR sensor 3-pin headers, clustered near the +X end of each module
+  // IR sensor 3-pin headers on the inner (+X) edge of each module
   ir: {
-    leftVcc:  [-1.85, 0.32, -0.48],
-    leftGnd:  [-1.85, 0.32, -0.55],
-    leftOut:  [-1.85, 0.32, -0.62],
-    rightVcc: [-1.85, 0.32,  0.48],
-    rightGnd: [-1.85, 0.32,  0.55],
-    rightOut: [-1.85, 0.32,  0.62],
+    leftVcc:  [-1.80, 0.22, -0.48],
+    leftGnd:  [-1.80, 0.22, -0.55],
+    leftOut:  [-1.80, 0.22, -0.62],
+    rightVcc: [-1.80, 0.22,  0.48],
+    rightGnd: [-1.80, 0.22,  0.55],
+    rightOut: [-1.80, 0.22,  0.62],
   },
-  // Breadboard rails — two rails along Z axis at different X positions on top
+  // Breadboard rails — two rails running along X on opposite Z edges of the top surface
   bb: {
-    plusA:  [-0.10, 0.365, -0.80],
-    plusB:  [ 0.20, 0.365, -0.80],
-    plusC:  [ 0.50, 0.365, -0.80],
-    minusA: [-0.10, 0.365, -0.20],
-    minusB: [ 0.20, 0.365, -0.20],
-    minusC: [ 0.50, 0.365, -0.20],
+    plusA:  [1.00, 0.35, -0.25],
+    plusB:  [1.25, 0.35, -0.25],
+    plusC:  [1.50, 0.35, -0.25],
+    minusA: [1.00, 0.35,  0.45],
+    minusB: [1.25, 0.35,  0.45],
+    minusC: [1.50, 0.35,  0.45],
   },
-  // Battery terminals on top of pack (snap connector)
+  // Battery snap connector terminals — on the side face of the rotated battery
+  // Battery at [1.2, 0.46, 0.8], rotated -90° on X, so terminals are on the "side" at y≈0.5, z≈0.5
   bat: {
-    plus:  [1.13, 0.64, 0.80],
-    minus: [1.27, 0.64, 0.80],
+    plus:  [1.15, 0.52, 0.50],
+    minus: [1.25, 0.52, 0.50],
   },
 };
 
@@ -337,14 +375,14 @@ function MotorWires({ visible, opacity = 1 }) {
   if (!visible) return null;
   return (
     <group>
-      {/* OUT1 → Left motor lead A (red) */}
-      <CurvedWire start={PINS.l298n.out1} end={PINS.mot.leftA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
+      {/* OUT1 → Left motor lead A (red) — high arc, biased toward motor side to route around platform */}
+      <CurvedWire start={PINS.l298n.out1} end={PINS.mot.leftA} color="#DC2626" visible arcHeight={0.55} arcBias={0.75} opacity={opacity} />
       {/* OUT2 → Left motor lead B (black) */}
-      <CurvedWire start={PINS.l298n.out2} end={PINS.mot.leftB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
+      <CurvedWire start={PINS.l298n.out2} end={PINS.mot.leftB} color="#0A0A0A" visible arcHeight={0.58} arcBias={0.75} opacity={opacity} />
       {/* OUT3 → Right motor lead A (red) */}
-      <CurvedWire start={PINS.l298n.out3} end={PINS.mot.rightA} color="#DC2626" visible arcHeight={0.9} opacity={opacity} />
+      <CurvedWire start={PINS.l298n.out3} end={PINS.mot.rightA} color="#DC2626" visible arcHeight={0.55} arcBias={0.75} opacity={opacity} />
       {/* OUT4 → Right motor lead B (black) */}
-      <CurvedWire start={PINS.l298n.out4} end={PINS.mot.rightB} color="#0A0A0A" visible arcHeight={1.0} opacity={opacity} />
+      <CurvedWire start={PINS.l298n.out4} end={PINS.mot.rightB} color="#0A0A0A" visible arcHeight={0.58} arcBias={0.75} opacity={opacity} />
     </group>
   );
 }
@@ -357,17 +395,17 @@ function SensorWires({ visible, opacity = 1 }) {
   return (
     <group>
       {/* Signals */}
-      <CurvedWire start={PINS.ir.leftOut}  end={PINS.ard.d2}       color="#FACC15" visible arcHeight={0.70} opacity={opacity} />
-      <CurvedWire start={PINS.ir.rightOut} end={PINS.ard.d3}       color="#EAB308" visible arcHeight={0.75} opacity={opacity} />
+      <CurvedWire start={PINS.ir.leftOut}  end={PINS.ard.d2}       color="#FACC15" visible arcHeight={0.12} opacity={opacity} />
+      <CurvedWire start={PINS.ir.rightOut} end={PINS.ard.d3}       color="#EAB308" visible arcHeight={0.13} opacity={opacity} />
       {/* VCC to + rail */}
-      <CurvedWire start={PINS.ir.leftVcc}  end={PINS.bb.plusA}     color="#EF4444" visible arcHeight={0.55} opacity={opacity} />
-      <CurvedWire start={PINS.ir.rightVcc} end={PINS.bb.plusC}     color="#EF4444" visible arcHeight={0.60} opacity={opacity} />
+      <CurvedWire start={PINS.ir.leftVcc}  end={PINS.bb.plusA}     color="#EF4444" visible arcHeight={0.10} opacity={opacity} />
+      <CurvedWire start={PINS.ir.rightVcc} end={PINS.bb.plusC}     color="#EF4444" visible arcHeight={0.11} opacity={opacity} />
       {/* GND to − rail */}
-      <CurvedWire start={PINS.ir.leftGnd}  end={PINS.bb.minusA}    color="#0A0A0A" visible arcHeight={0.45} opacity={opacity} />
-      <CurvedWire start={PINS.ir.rightGnd} end={PINS.bb.minusC}    color="#0A0A0A" visible arcHeight={0.50} opacity={opacity} />
+      <CurvedWire start={PINS.ir.leftGnd}  end={PINS.bb.minusA}    color="#0A0A0A" visible arcHeight={0.09} opacity={opacity} />
+      <CurvedWire start={PINS.ir.rightGnd} end={PINS.bb.minusC}    color="#0A0A0A" visible arcHeight={0.10} opacity={opacity} />
       {/* Rails fed from Arduino */}
-      <CurvedWire start={PINS.ard.v5}      end={PINS.bb.plusB}     color="#EF4444" visible arcHeight={0.50} opacity={opacity} />
-      <CurvedWire start={PINS.ard.gnd}     end={PINS.bb.minusB}    color="#0A0A0A" visible arcHeight={0.40} opacity={opacity} />
+      <CurvedWire start={PINS.ard.v5}      end={PINS.bb.plusB}     color="#EF4444" visible arcHeight={0.08} opacity={opacity} />
+      <CurvedWire start={PINS.ard.gnd}     end={PINS.bb.minusB}    color="#0A0A0A" visible arcHeight={0.08} opacity={opacity} />
     </group>
   );
 }
@@ -378,17 +416,17 @@ function ControlWires({ visible, opacity = 1 }) {
   return (
     <group>
       {/* ENA ↔ D5 (PWM) */}
-      <CurvedWire start={PINS.ard.d5}  end={PINS.l298n.ena} color="#A855F7" visible arcHeight={0.58} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d5}  end={PINS.l298n.ena} color="#A855F7" visible arcHeight={0.25} arcBias={0.35} opacity={opacity} />
       {/* ENB ↔ D6 (PWM) */}
-      <CurvedWire start={PINS.ard.d6}  end={PINS.l298n.enb} color="#22C55E" visible arcHeight={0.55} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d6}  end={PINS.l298n.enb} color="#22C55E" visible arcHeight={0.28} arcBias={0.35} opacity={opacity} />
       {/* IN1 ↔ D8 */}
-      <CurvedWire start={PINS.ard.d8}  end={PINS.l298n.in1} color="#3B82F6" visible arcHeight={0.52} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d8}  end={PINS.l298n.in1} color="#3B82F6" visible arcHeight={0.22} arcBias={0.35} opacity={opacity} />
       {/* IN2 ↔ D9 */}
-      <CurvedWire start={PINS.ard.d9}  end={PINS.l298n.in2} color="#F97316" visible arcHeight={0.50} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d9}  end={PINS.l298n.in2} color="#F97316" visible arcHeight={0.25} arcBias={0.35} opacity={opacity} />
       {/* IN3 ↔ D10 */}
-      <CurvedWire start={PINS.ard.d10} end={PINS.l298n.in3} color="#EC4899" visible arcHeight={0.48} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d10} end={PINS.l298n.in3} color="#EC4899" visible arcHeight={0.28} arcBias={0.35} opacity={opacity} />
       {/* IN4 ↔ D11 */}
-      <CurvedWire start={PINS.ard.d11} end={PINS.l298n.in4} color="#14B8A6" visible arcHeight={0.46} opacity={opacity} />
+      <CurvedWire start={PINS.ard.d11} end={PINS.l298n.in4} color="#14B8A6" visible arcHeight={0.30} arcBias={0.35} opacity={opacity} />
     </group>
   );
 }
@@ -402,14 +440,14 @@ function PowerWires({ visible, opacity = 1 }) {
   if (!visible) return null;
   return (
     <group>
-      {/* Battery + → L298N +12V */}
-      <CurvedWire start={PINS.bat.plus}   end={PINS.l298n.v12}  color="#EF4444" visible arcHeight={0.85} opacity={opacity} />
+      {/* Battery + → L298N +12V — long wire from battery to L298N, arc up and over */}
+      <CurvedWire start={PINS.bat.plus}   end={PINS.l298n.v12}  color="#EF4444" visible arcHeight={0.65} arcBias={0.20} opacity={opacity} />
       {/* Battery − → L298N GND */}
-      <CurvedWire start={PINS.bat.minus}  end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.75} opacity={opacity} />
-      {/* Arduino VIN → Battery + (7–12V supply) */}
-      <CurvedWire start={PINS.ard.vin}    end={PINS.bat.plus}   color="#EF4444" visible arcHeight={0.60} opacity={opacity} />
-      {/* Arduino GND → L298N GND (common ground) */}
-      <CurvedWire start={PINS.ard.gnd}    end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.40} opacity={opacity} />
+      <CurvedWire start={PINS.bat.minus}  end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.68} arcBias={0.20} opacity={opacity} />
+      {/* Arduino VIN → Battery + (7–12V supply) — shorter wire, arc over Arduino */}
+      <CurvedWire start={PINS.ard.vin}    end={PINS.bat.plus}   color="#EF4444" visible arcHeight={0.35} arcBias={0.60} opacity={opacity} />
+      {/* Arduino GND → L298N GND (common ground) — wire across the chassis */}
+      <CurvedWire start={PINS.ard.gnd}    end={PINS.l298n.gnd1} color="#0A0A0A" visible arcHeight={0.30} arcBias={0.40} opacity={opacity} />
     </group>
   );
 }

@@ -82,7 +82,7 @@ function FlipCard({ useCase, isRevealed, isNext, index }) {
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             borderRadius: 12,
-            background: '#1A1A1A',
+            background: '#0F0F0F',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -94,17 +94,48 @@ function FlipCard({ useCase, isRevealed, isNext, index }) {
             transition: 'border-color 0.3s, box-shadow 0.3s',
           }}
         >
+          {/* Use-case image thumbnail */}
+          {useCase.thumbnail && (
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: `url(${useCase.thumbnail})`,
+              backgroundSize: 'cover',
+              backgroundPosition: useCase.thumbnailPosition || 'center',
+              filter: 'saturate(0.9) contrast(1.05)',
+              transform: 'scale(1.03)',
+            }} />
+          )}
+
+          {/* Dark tint for locked-card look + readable text */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(10,10,10,0.60) 0%, rgba(10,10,10,0.82) 100%)',
+          }} />
+
           {/* Diagonal stripe texture */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 14px)',
           }} />
+
           <div style={{
+            position: 'relative',
             width: 10, height: 10, borderRadius: '50%',
             background: useCase.badgeColor,
             boxShadow: `0 0 12px ${useCase.badgeColor}`,
           }} />
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+
+          <span style={{
+            position: 'relative',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: 10,
+            color: 'rgba(255,255,255,0.72)',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            textShadow: '0 1px 1px rgba(0,0,0,0.5)',
+          }}>
             {String(index + 1).padStart(2, '0')} / {isNext ? 'click to reveal' : 'locked'}
           </span>
         </div>
