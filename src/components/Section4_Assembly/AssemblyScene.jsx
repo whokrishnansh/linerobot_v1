@@ -460,16 +460,8 @@ function Track({ visible }) {
         <planeGeometry args={[18, 12]} />
         <meshStandardMaterial color="#E8E4D8" />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <planeGeometry args={[0.14, 12]} />
-        <meshStandardMaterial color="#0A0A0A" />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, Math.PI / 2.8]} position={[3.5, 0.01, 2.5]}>
-        <planeGeometry args={[0.14, 6]} />
-        <meshStandardMaterial color="#0A0A0A" />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[5, 0.01, 4]}>
-        <planeGeometry args={[0.14, 5]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <torusGeometry args={[TRACK_RADIUS, 0.07, 14, 120]} />
         <meshStandardMaterial color="#0A0A0A" />
       </mesh>
     </group>
@@ -519,14 +511,19 @@ const WIRE_GROUPS = ['wires_motor', 'wires_sensor', 'wires_control', 'wires_powe
 const OP_ACTIVE  = 1.0;
 const OP_OLD     = 0.12;
 const OP_NEUTRAL = 0.5;
+const TRACK_RADIUS = 3.4;
+const TRACK_ANGULAR_SPEED = 0.32;
 
 export default function AssemblyScene({ currentStep, cameraOverride }) {
   const step     = ASSEMBLY_STEPS[currentStep - 1];
   const prevStep = currentStep > 1 ? ASSEMBLY_STEPS[currentStep - 2] : null;
   const reveal     = step?.reveal     || [];
   const prevReveal = prevStep?.reveal || [];
+  const showTrack = reveal.includes('track');
   const camPos   = cameraOverride?.position || step?.camera?.position || [0, 9, 7];
   const camTarget = cameraOverride?.target  || step?.camera?.target  || [0, 0, 0];
+  const robotGroupRef = useRef(null);
+  const moveT = useRef(0);
 
   const newestComponent = reveal[reveal.length - 1];
   const highlightProps  = HIGHLIGHT_MAP[newestComponent];
@@ -540,6 +537,30 @@ export default function AssemblyScene({ currentStep, cameraOverride }) {
     return OP_OLD;
   }
 
+  useFrame((_, delta) => {
+    if (!robotGroupRef.current) return;
+
+    if (currentStep === 13) {
+      moveT.current += delta * TRACK_ANGULAR_SPEED;
+      const angle = moveT.current;
+      const x = TRACK_RADIUS * Math.cos(angle);
+      const z = TRACK_RADIUS * Math.sin(angle);
+
+      const tangentX = -Math.sin(angle);
+      const tangentZ = Math.cos(angle);
+
+      robotGroupRef.current.position.x = x;
+      robotGroupRef.current.position.z = z;
+      robotGroupRef.current.rotation.y = Math.atan2(tangentZ, -tangentX);
+      return;
+    }
+
+    moveT.current = 0;
+    robotGroupRef.current.position.x = 0;
+    robotGroupRef.current.position.z = 0;
+    robotGroupRef.current.rotation.y = 0;
+  });
+
   return (
     <>
       <CameraController targetPosition={camPos} targetLookAt={camTarget} />
@@ -552,30 +573,34 @@ export default function AssemblyScene({ currentStep, cameraOverride }) {
         <planeGeometry args={[22, 22]} />
         <meshStandardMaterial color="#E8E4D8" />
       </mesh>
-      <gridHelper args={[22, 22, 'rgba(10,10,10,0.04)', 'rgba(10,10,10,0.04)']} position={[0, -0.16, 0]} />
-
-      <Chassis    visible={reveal.includes('chassis')} />
-      <Motors     visible={reveal.includes('motor')} />
-      <Castor     visible={reveal.includes('castor')} />
-      <Arduino    visible={reveal.includes('arduino')} />
-      <Breadboard visible={reveal.includes('breadboard')} />
-      <L298N      visible={reveal.includes('l298n')} />
-      <IRSensors  visible={reveal.includes('ir')} />
-
-      <MotorWires   visible={reveal.includes('wires_motor')}   opacity={wireOpacity('wires_motor')} />
-      <SensorWires  visible={reveal.includes('wires_sensor')}  opacity={wireOpacity('wires_sensor')} />
-      <ControlWires visible={reveal.includes('wires_control')} opacity={wireOpacity('wires_control')} />
-      <Battery      visible={reveal.includes('battery')} />
-      <PowerWires   visible={reveal.includes('wires_power')}   opacity={wireOpacity('wires_power')} />
-      <Track        visible={reveal.includes('track')} />
-
-      {highlightProps && ['chassis','motor','castor','arduino','breadboard','l298n','ir','battery'].includes(newestComponent) && (
-        <HighlightBox
-          position={highlightProps.position}
-          size={highlightProps.size}
-          color={step?.phaseColor || '#4F46E5'}
-        />
+      {!showTrack && (
+        <gridHelper args={[22, 22, 'rgba(10,10,10,0.04)', 'rgba(10,10,10,0.04)']} position={[0, -0.16, 0]} />
       )}
+
+      <group ref={robotGroupRef}>
+        <Chassis    visible={reveal.includes('chassis')} />
+        <Motors     visible={reveal.includes('motor')} />
+        <Castor     visible={reveal.includes('castor')} />
+        <Arduino    visible={reveal.includes('arduino')} />
+        <Breadboard visible={reveal.includes('breadboard')} />
+        <L298N      visible={reveal.includes('l298n')} />
+        <IRSensors  visible={reveal.includes('ir')} />
+
+        <MotorWires   visible={reveal.includes('wires_motor')}   opacity={wireOpacity('wires_motor')} />
+        <SensorWires  visible={reveal.includes('wires_sensor')}  opacity={wireOpacity('wires_sensor')} />
+        <ControlWires visible={reveal.includes('wires_control')} opacity={wireOpacity('wires_control')} />
+        <Battery      visible={reveal.includes('battery')} />
+        <PowerWires   visible={reveal.includes('wires_power')}   opacity={wireOpacity('wires_power')} />
+
+        {highlightProps && ['chassis','motor','castor','arduino','breadboard','l298n','ir','battery'].includes(newestComponent) && (
+          <HighlightBox
+            position={highlightProps.position}
+            size={highlightProps.size}
+            color={step?.phaseColor || '#4F46E5'}
+          />
+        )}
+      </group>
+      <Track        visible={reveal.includes('track')} />
 
       <OrbitControls
         enableDamping

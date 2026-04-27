@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, ChevronLeft } from 'lucide-react';
+import { RotateCcw, ChevronLeft, Download } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 import { useApp } from '../../context/AppContext';
 import { USE_CASES } from '../../data/useCases';
 
@@ -22,6 +23,8 @@ const CARD_STOPS = [
   { pathT: 0.63 },
   { pathT: 0.82 },
 ];
+
+const FINAL_PATH_T = 0.96;
 
 // Card CSS positions (in the 900px-wide container with 64px h-padding → 772px content)
 // SVG viewBox 800 wide → scale ≈ 0.965; xMidYMin meet
@@ -202,6 +205,14 @@ export default function RealWorld() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [started, setStarted] = useState(false);
   const [showFinale, setShowFinale] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [isGeneratingCertificate, setIsGeneratingCertificate] = useState(false);
+  const [certificateError, setCertificateError] = useState('');
+  const [certificateForm, setCertificateForm] = useState({
+    studentName: '',
+    studentClass: '9th',
+    section: '',
+  });
 
   const svgRef = useRef(null);
   const robotPosRef = useRef({ x: 400, y: 20, angle: 90 });
@@ -243,7 +254,7 @@ export default function RealWorld() {
     setIsAnimating(true);
     const startProgress = robotProgress;
     const dist = targetProgress - startProgress;
-    const duration = Math.max(1400, Math.abs(dist) * 4200);
+    const duration = Math.max(2600, Math.abs(dist) * 8200);
     const t0 = performance.now();
 
     function step(now) {
@@ -263,7 +274,158 @@ export default function RealWorld() {
     animRef.current = requestAnimationFrame(step);
   }, [isAnimating, robotProgress]);
 
+  function handleMoveToFinish() {
+    if (!started || isAnimating) return;
+    animateTo(FINAL_PATH_T);
+  }
+
+  function sanitizeFileName(value) {
+    return value
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_\-]/g, '')
+      .slice(0, 40);
+  }
+
+  function handleCertificateInputChange(field, value) {
+    setCertificateForm(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  }
+
+  function buildAndDownloadCertificatePdf() {
+    const date = new Date().toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    const certificateId = `ATL-${Date.now().toString(36).toUpperCase()}`;
+    const studentName = certificateForm.studentName.trim();
+    const { studentClass, section } = certificateForm;
+
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    doc.setFillColor(252, 249, 241);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+    doc.setFillColor(229, 240, 255);
+    doc.circle(70, 55, 95, 'F');
+    doc.setFillColor(255, 236, 204);
+    doc.circle(pageWidth - 70, pageHeight - 55, 95, 'F');
+
+    doc.setDrawColor(35, 63, 134);
+    doc.setLineWidth(4);
+    doc.roundedRect(28, 28, pageWidth - 56, pageHeight - 56, 18, 18, 'S');
+    doc.setDrawColor(189, 205, 238);
+    doc.setLineWidth(1.4);
+    doc.roundedRect(40, 40, pageWidth - 80, pageHeight - 80, 14, 14, 'S');
+
+    doc.setTextColor(35, 63, 134);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('ATL ROBOT LAB', pageWidth / 2, 78, { align: 'center' });
+
+    doc.setTextColor(22, 31, 51);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(44);
+    doc.text('Certificate of Completion', pageWidth / 2, 130, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.setTextColor(76, 92, 125);
+    doc.text('This is proudly awarded to', pageWidth / 2, 168, { align: 'center' });
+
+    doc.setFont('times', 'bolditalic');
+    doc.setFontSize(40);
+    doc.setTextColor(24, 45, 92);
+    doc.text(studentName, pageWidth / 2, 225, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.setTextColor(38, 49, 74);
+    const achievementText =
+      'for successfully completing ATL Robot Lab Activity 01 and demonstrating strong understanding of line-following robot principles and practical applications.';
+    doc.text(achievementText, pageWidth / 2, 258, { align: 'center', maxWidth: 620, lineHeightFactor: 1.35 });
+
+    const infoBoxWidth = 420;
+    const infoBoxX = (pageWidth - infoBoxWidth) / 2;
+    const infoBoxY = 312;
+    const infoCenterX = pageWidth / 2;
+    doc.setFillColor(236, 243, 255);
+    doc.roundedRect(infoBoxX, infoBoxY, infoBoxWidth, 56, 10, 10, 'F');
+    doc.setDrawColor(198, 214, 245);
+    doc.roundedRect(infoBoxX, infoBoxY, infoBoxWidth, 56, 10, 10, 'S');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(33, 58, 115);
+    doc.text(`Class: ${studentClass}`, infoCenterX - 90, 346, { align: 'center' });
+    doc.text(`Section: ${section.toUpperCase()}`, infoCenterX + 90, 346, { align: 'center' });
+
+    doc.setDrawColor(175, 186, 210);
+    doc.line(95, pageHeight - 95, 245, pageHeight - 95);
+    doc.line(pageWidth - 245, pageHeight - 95, pageWidth - 95, pageHeight - 95);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(36, 46, 69);
+    doc.text('Teacher Signature', 170, pageHeight - 78, { align: 'center' });
+    doc.text('Program Coordinator', pageWidth - 170, pageHeight - 78, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(80, 90, 112);
+    doc.text(`Date: ${date}`, 95, pageHeight - 48);
+    doc.text(`Certificate ID: ${certificateId}`, pageWidth - 95, pageHeight - 48, { align: 'right' });
+    doc.text(`Progress: ${revealedCards.length}/${USE_CASES.length} use-cases completed`, pageWidth / 2, pageHeight - 48, { align: 'center' });
+
+    doc.save(`ATL_Certificate_${sanitizeFileName(studentName) || 'student'}_${certificateId}.pdf`);
+  }
+
+  function handleGenerateCertificate() {
+    const studentName = certificateForm.studentName.trim();
+    const section = certificateForm.section.trim();
+
+    if (studentName.length < 2) {
+      setCertificateError('Please enter a valid student name.');
+      return;
+    }
+
+    if (!section) {
+      setCertificateError('Please enter the section (for example: A).');
+      return;
+    }
+
+    setCertificateError('');
+    setIsGeneratingCertificate(true);
+    try {
+      buildAndDownloadCertificatePdf();
+      setShowCertificateModal(false);
+    } catch {
+      setCertificateError('Could not generate the certificate PDF. Please try again.');
+    } finally {
+      setIsGeneratingCertificate(false);
+    }
+  }
+
   useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current); }, []);
+
+  useEffect(() => {
+    if (!showCertificateModal) return undefined;
+
+    function handleEsc(e) {
+      if (e.key === 'Escape' && !isGeneratingCertificate) {
+        setShowCertificateModal(false);
+      }
+    }
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [showCertificateModal, isGeneratingCertificate]);
 
   function handleStart() {
     if (animRef.current) cancelAnimationFrame(animRef.current);
@@ -440,6 +602,25 @@ export default function RealWorld() {
             {/* Actions */}
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 28 }}>
               <button
+                onClick={handleMoveToFinish}
+                disabled={isAnimating || robotProgress >= FINAL_PATH_T - 0.005}
+                style={{
+                  padding: '12px 22px',
+                  background: 'white',
+                  color: '#0A0A0A',
+                  border: '1px solid rgba(10,10,10,0.2)',
+                  borderRadius: 10,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: isAnimating || robotProgress >= FINAL_PATH_T - 0.005 ? 'not-allowed' : 'pointer',
+                  opacity: isAnimating || robotProgress >= FINAL_PATH_T - 0.005 ? 0.5 : 1,
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                Move robot
+              </button>
+
+              <button
                 style={{
                   padding: '12px 22px', background: '#0A0A0A', color: 'white', border: 'none',
                   borderRadius: 10, fontSize: 14, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif',
@@ -448,6 +629,30 @@ export default function RealWorld() {
               >
                 Save progress
               </button>
+
+              <button
+                onClick={() => {
+                  setCertificateError('');
+                  setShowCertificateModal(true);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '12px 22px',
+                  background: '#0A0A0A',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 10,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                <Download size={14} /> Download certificate (PDF)
+              </button>
+
               <button
                 onClick={handleStart}
                 style={{
@@ -480,6 +685,142 @@ export default function RealWorld() {
             <button onClick={prevSection} style={{ background: 'none', border: 'none', color: '#737373', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
               ← Back to Assembly
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCertificateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(10,10,10,0.45)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 60,
+              padding: 20,
+            }}
+            onClick={() => {
+              if (!isGeneratingCertificate) setShowCertificateModal(false);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                width: 'min(560px, 100%)',
+                borderRadius: 16,
+                overflow: 'hidden',
+                background: '#FFFFFF',
+                boxShadow: '0 30px 80px rgba(10,10,10,0.28)',
+                border: '1px solid rgba(10,10,10,0.08)',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ padding: '22px 24px 14px', background: 'linear-gradient(135deg, #EEF4FF 0%, #F8FBFF 100%)', borderBottom: '1px solid rgba(10,10,10,0.08)' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#3458A2', textTransform: 'uppercase', marginBottom: 8 }}>
+                  Certificate Details
+                </div>
+                <h3 style={{ margin: 0, fontSize: 24, lineHeight: 1.2, color: '#0A0A0A', letterSpacing: '-0.02em' }}>
+                  Generate Student Certificate
+                </h3>
+                <p style={{ margin: '8px 0 0', fontSize: 13, color: '#4B5563', lineHeight: 1.5 }}>
+                  Fill the student information below. We will generate a polished completion certificate in PDF format.
+                </p>
+              </div>
+
+              <div style={{ padding: 24, display: 'grid', gap: 16 }}>
+                <label style={{ display: 'grid', gap: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1F2937' }}>Student name</span>
+                  <input
+                    type="text"
+                    value={certificateForm.studentName}
+                    onChange={e => handleCertificateInputChange('studentName', e.target.value)}
+                    placeholder="Enter full name"
+                    style={{ border: '1px solid rgba(10,10,10,0.16)', borderRadius: 10, padding: '11px 12px', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif' }}
+                  />
+                </label>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <label style={{ display: 'grid', gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1F2937' }}>Class</span>
+                    <select
+                      value={certificateForm.studentClass}
+                      onChange={e => handleCertificateInputChange('studentClass', e.target.value)}
+                      style={{ border: '1px solid rgba(10,10,10,0.16)', borderRadius: 10, padding: '11px 12px', fontSize: 14, outline: 'none', background: 'white', fontFamily: 'Inter, sans-serif' }}
+                    >
+                      <option value="9th">9th</option>
+                      <option value="10th">10th</option>
+                    </select>
+                  </label>
+
+                  <label style={{ display: 'grid', gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1F2937' }}>Section</span>
+                    <input
+                      type="text"
+                      value={certificateForm.section}
+                      onChange={e => handleCertificateInputChange('section', e.target.value.toUpperCase())}
+                      placeholder="A"
+                      maxLength={4}
+                      style={{ border: '1px solid rgba(10,10,10,0.16)', borderRadius: 10, padding: '11px 12px', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif' }}
+                    />
+                  </label>
+                </div>
+
+                {certificateError && (
+                  <div style={{ fontSize: 12, color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '9px 10px' }}>
+                    {certificateError}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
+                  <button
+                    onClick={() => setShowCertificateModal(false)}
+                    disabled={isGeneratingCertificate}
+                    style={{
+                      border: '1px solid rgba(10,10,10,0.2)',
+                      background: 'white',
+                      color: '#0A0A0A',
+                      borderRadius: 10,
+                      padding: '10px 16px',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: isGeneratingCertificate ? 'not-allowed' : 'pointer',
+                      opacity: isGeneratingCertificate ? 0.6 : 1,
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={handleGenerateCertificate}
+                    disabled={isGeneratingCertificate}
+                    style={{
+                      border: 'none',
+                      background: '#0A0A0A',
+                      color: 'white',
+                      borderRadius: 10,
+                      padding: '10px 16px',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: isGeneratingCertificate ? 'not-allowed' : 'pointer',
+                      opacity: isGeneratingCertificate ? 0.6 : 1,
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                  >
+                    {isGeneratingCertificate ? 'Generating...' : 'Download PDF'}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

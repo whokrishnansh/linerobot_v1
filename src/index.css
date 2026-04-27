@@ -39,6 +39,11 @@ body {
   overflow-x: hidden;
 }
 
+* {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Typography utilities */
 .font-serif-italic {
   font-family: 'Instrument Serif', Georgia, serif;

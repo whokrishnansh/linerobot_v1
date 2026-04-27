@@ -502,8 +502,8 @@ export default function AssemblyViewer() {
 
         {/* Col 3: Actions */}
         <div style={{ width: 220, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10, flexShrink: 0 }}>
-          {/* Mark step done / Code upload trigger */}
-          {currentStep === 12 && !isDone ? (
+          {/* Code upload trigger (always available on step 12) */}
+          {currentStep === 12 && (
             <button
               onClick={() => setShowCodeOverlay(true)}
               style={{
@@ -520,32 +520,32 @@ export default function AssemblyViewer() {
                 transition: 'opacity 0.2s',
               }}
             >
-              View code to upload
-            </button>
-          ) : (
-            <button
-              onClick={handleMarkDone}
-              disabled={isDone}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                background: isDone ? 'rgba(10,10,10,0.06)' : '#0A0A0A',
-                color: isDone ? '#A1A1A1' : 'white',
-                border: 'none',
-                borderRadius: 8,
-                fontSize: 13,
-                fontWeight: 500,
-                cursor: isDone ? 'default' : 'pointer',
-                fontFamily: 'Inter, sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-              }}
-            >
-              {isDone ? <><Check size={14} /> Step done</> : 'Mark step done ✓'}
+              {isDone ? 'View code again' : 'View code to upload'}
             </button>
           )}
+
+          <button
+            onClick={handleMarkDone}
+            disabled={isDone}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              background: isDone ? 'rgba(10,10,10,0.06)' : '#0A0A0A',
+              color: isDone ? '#A1A1A1' : 'white',
+              border: 'none',
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: isDone ? 'default' : 'pointer',
+              fontFamily: 'Inter, sans-serif',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            {isDone ? <><Check size={14} /> Step done</> : 'Mark step done ✓'}
+          </button>
 
           {/* Prev / Skip */}
           <div style={{ display: 'flex', gap: 8 }}>
