@@ -247,37 +247,37 @@ export default function AssemblyViewer() {
   const isDone = !!completedSteps[currentStep];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative', padding: '10px 24px 24px', gap: 16 }}>
 
       {/* Step track (top bar) */}
-      <div style={{
-        height: 48,
-        background: 'white',
-        borderBottom: '1px solid rgba(10,10,10,0.08)',
+      <div className="kid-surface" style={{
+        minHeight: 68,
+        background: 'rgba(255,255,255,0.92)',
         display: 'flex',
         alignItems: 'center',
-        padding: '0 24px',
+        padding: '12px 22px',
         gap: 16,
         flexShrink: 0,
+        borderRadius: 28,
       }}>
         {/* Phase pill */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          padding: '4px 12px',
+          padding: '8px 14px',
           borderRadius: 99,
-          background: `${step.phaseColor}18`,
-          border: `1px solid ${step.phaseColor}30`,
+          background: 'var(--purple-100)',
+          border: '1px solid rgba(141, 105, 255, 0.18)',
           flexShrink: 0,
         }}>
-          <span style={{ width: 7, height: 7, borderRadius: '50%', background: step.phaseColor, flexShrink: 0 }} />
-          <span style={{ fontSize: 11, fontWeight: 600, color: step.phaseColor, letterSpacing: '0.03em' }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--teal-500)', flexShrink: 0 }} />
+          <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--purple-500)', letterSpacing: '0.04em', fontFamily: 'Nunito, sans-serif', textTransform: 'uppercase' }}>
             {step.phase}
           </span>
         </div>
 
-        <div style={{ width: 1, height: 16, background: 'rgba(10,10,10,0.1)', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 16, background: 'rgba(46,58,159,0.22)', flexShrink: 0 }} />
 
         {/* Step dots */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'center' }}>
@@ -290,21 +290,21 @@ export default function AssemblyViewer() {
             return (
               <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 {showSeparator && (
-                  <div style={{ width: 1, height: 16, background: 'rgba(10,10,10,0.1)', margin: '0 2px' }} />
+                  <div style={{ width: 1, height: 16, background: 'rgba(46,58,159,0.22)', margin: '0 2px' }} />
                 )}
                 <button
                   onClick={() => setCurrentStep(s.id)}
                   aria-label={`Step ${s.id}: ${s.title}`}
                   aria-current={isActive ? 'step' : undefined}
                   style={{
-                    width: 10,
-                    height: 10,
+                    width: 24,
+                    height: 24,
                     borderRadius: '50%',
-                    border: `1.5px solid ${isCompleted ? 'transparent' : isActive ? s.phaseColor : 'rgba(10,10,10,0.2)'}`,
-                    background: isCompleted ? '#0A0A0A' : isActive ? s.phaseColor : 'white',
+                    border: `1.5px solid ${isCompleted || isActive ? 'transparent' : 'var(--navy-700)'}`,
+                    background: isCompleted ? 'var(--navy-900)' : isActive ? 'var(--teal-500)' : 'white',
                     cursor: 'pointer',
                     padding: 0,
-                    boxShadow: isActive ? `0 0 0 3px ${s.phaseColor}40` : 'none',
+                    boxShadow: isActive ? '0 0 0 3px rgba(77,200,212,0.35)' : 'none',
                     transition: 'all 0.2s',
                     display: 'flex',
                     alignItems: 'center',
@@ -313,10 +313,20 @@ export default function AssemblyViewer() {
                     position: 'relative',
                   }}
                 >
-                  {isCompleted && (
+                  {isCompleted ? (
                     <svg width="6" height="5" viewBox="0 0 8 6" fill="none" style={{ flexShrink: 0 }}>
                       <path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
+                  ) : (
+                    <span style={{
+                      fontSize: 11,
+                      fontWeight: 800,
+                      fontFamily: 'Nunito, sans-serif',
+                      color: isActive ? 'var(--navy-900)' : 'var(--navy-900)',
+                      lineHeight: 1,
+                    }}>
+                      {s.id}
+                    </span>
                   )}
                 </button>
               </div>
@@ -324,16 +334,16 @@ export default function AssemblyViewer() {
           })}
         </div>
 
-        <div style={{ width: 1, height: 16, background: 'rgba(10,10,10,0.1)', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 16, background: 'rgba(46,58,159,0.22)', flexShrink: 0 }} />
 
         {/* Counter */}
-        <span style={{ fontSize: 11, color: '#A1A1A1', fontWeight: 500, flexShrink: 0 }}>
+        <span style={{ fontSize: 11, color: 'var(--navy-700)', fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase', fontFamily: 'Nunito, sans-serif', flexShrink: 0 }}>
           {completedCount}/13 done
         </span>
       </div>
 
       {/* 3D Stage */}
-      <div style={{ flex: 1, position: 'relative', background: 'radial-gradient(ellipse at 50% 20%, #F5F3ED 0%, #E8E4D8 100%)' }}>
+      <div className="kid-surface" style={{ flex: 1, position: 'relative', background: 'radial-gradient(ellipse at 50% 20%, #f6fbff 0%, #dbe8ff 100%)', borderRadius: 32, overflow: 'hidden' }}>
         <Canvas
           camera={{ position: [6, 7, 7], fov: 45 }}
           shadows
@@ -357,15 +367,15 @@ export default function AssemblyViewer() {
               onClick={() => setActiveCamera(p => p?.label === name ? null : { ...cam, label: name })}
               style={{
                 padding: '5px 12px',
-                borderRadius: 6,
-                fontSize: 11,
-                fontWeight: 500,
+                borderRadius: 14,
+                fontSize: 12,
+                fontWeight: 800,
                 fontFamily: 'Inter, sans-serif',
-                background: activeCamera?.label === name ? '#0A0A0A' : 'white',
-                color: activeCamera?.label === name ? 'white' : '#0A0A0A',
-                border: '1px solid rgba(10,10,10,0.12)',
+                background: activeCamera?.label === name ? 'linear-gradient(135deg, var(--pink-500), var(--orange-500))' : 'white',
+                color: activeCamera?.label === name ? 'white' : 'var(--ink-900)',
+                border: '1px solid rgba(104, 132, 231, 0.16)',
                 cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                boxShadow: 'var(--shadow-soft)',
                 transition: 'background 0.2s, color 0.2s',
               }}
             >
@@ -386,12 +396,12 @@ export default function AssemblyViewer() {
             gap: 6,
             padding: '6px 12px',
             background: 'white',
-            border: '1px solid rgba(10,10,10,0.12)',
+            border: '1px solid rgba(104, 132, 231, 0.16)',
             borderRadius: 99,
-            fontSize: 12,
-            fontWeight: 500,
+            fontSize: 13,
+            fontWeight: 800,
             cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            boxShadow: 'var(--shadow-soft)',
             zIndex: 10,
           }}
         >
@@ -406,13 +416,14 @@ export default function AssemblyViewer() {
           left: '50%',
           transform: 'translateX(-50%)',
           padding: '5px 12px',
-          background: 'rgba(255,255,255,0.7)',
+          background: 'rgba(255,255,255,0.82)',
           backdropFilter: 'blur(4px)',
           borderRadius: 99,
-          fontSize: 11,
-          color: '#737373',
+          fontSize: 12,
+          color: 'var(--ink-700)',
           whiteSpace: 'nowrap',
           zIndex: 5,
+          fontWeight: 800,
         }}>
           3D preview · production uses three.js with real GLB models
         </div>
@@ -436,12 +447,13 @@ export default function AssemblyViewer() {
       </div>
 
       {/* Instruction panel (bottom) */}
-      <div style={{
+      <div className="kid-surface" style={{
         height: 180,
-        background: 'white',
-        borderTop: '1px solid rgba(10,10,10,0.08)',
+        background: 'rgba(255,255,255,0.94)',
         display: 'flex',
         flexShrink: 0,
+        borderRadius: 30,
+        overflow: 'hidden',
       }}>
         {/* Col 1: Instruction */}
         <div style={{ flex: 1, padding: '24px 32px 24px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRight: '1px solid rgba(10,10,10,0.06)', minWidth: 0 }}>
@@ -486,9 +498,9 @@ export default function AssemblyViewer() {
         {/* Col 2: Watch out */}
         <div style={{ width: 280, padding: 24, borderRight: '1px solid rgba(10,10,10,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center', flexShrink: 0 }}>
           <div style={{
-            background: '#FEFBF3',
-            borderLeft: '3px solid #F59E0B',
-            borderRadius: '0 8px 8px 0',
+            background: '#FFF5D9',
+            borderLeft: '6px solid #F59E0B',
+            borderRadius: 18,
             padding: '10px 14px',
           }}>
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#B45309', marginBottom: 4 }}>
@@ -527,17 +539,9 @@ export default function AssemblyViewer() {
           <button
             onClick={handleMarkDone}
             disabled={isDone}
+            className={isDone ? 'kid-secondary' : 'kid-primary'}
             style={{
               width: '100%',
-              padding: '12px 16px',
-              background: isDone ? 'rgba(10,10,10,0.06)' : '#0A0A0A',
-              color: isDone ? '#A1A1A1' : 'white',
-              border: 'none',
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 500,
-              cursor: isDone ? 'default' : 'pointer',
-              fontFamily: 'Inter, sans-serif',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -549,37 +553,8 @@ export default function AssemblyViewer() {
 
           {/* Prev / Skip */}
           <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              onClick={handlePrev}
-              disabled={currentStep === 1}
-              style={{
-                flex: 1,
-                padding: '9px 8px',
-                background: 'transparent',
-                border: '1px solid rgba(10,10,10,0.15)',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 500,
-                cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
-                color: currentStep === 1 ? '#A1A1A1' : '#0A0A0A',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >← Prev</button>
-            <button
-              onClick={currentStep === 13 ? nextSection : handleNext}
-              style={{
-                flex: 1,
-                padding: '9px 8px',
-                background: 'transparent',
-                border: '1px solid rgba(10,10,10,0.15)',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 500,
-                cursor: 'pointer',
-                color: '#0A0A0A',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
+            <button onClick={handlePrev} disabled={currentStep === 1} className="kid-secondary" style={{ flex: 1 }}>Prev</button>
+            <button onClick={currentStep === 13 ? nextSection : handleNext} className="kid-secondary" style={{ flex: 1 }}>
               {currentStep === 13 ? 'Finish →' : 'Skip →'}
             </button>
           </div>

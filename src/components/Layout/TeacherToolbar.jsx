@@ -1,3 +1,4 @@
+import { Bot, CircleHelp, Presentation, RotateCcw } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useToast, Toast } from '../../shared/Toast';
 
@@ -27,66 +28,75 @@ export default function TeacherToolbar() {
       <header
         role="banner"
         style={{
-          height: 44,
-          background: '#0A0A0A',
+          minHeight: 72,
+          background: 'transparent',
           display: 'flex',
           alignItems: 'center',
-          padding: '0 20px',
-          gap: 16,
+          padding: '14px 22px 10px',
+          gap: 18,
           flexShrink: 0,
           zIndex: 50,
           position: 'relative',
         }}
       >
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <div
+          className="kid-surface"
+          style={{
+            width: '100%',
+            borderRadius: 24,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 18,
+            padding: '12px 14px',
+          }}
+        >
           <div
             style={{
-              width: 18,
-              height: 18,
-              background: 'white',
-              borderRadius: 3,
+              width: 48,
+              height: 48,
+              background: 'linear-gradient(135deg, var(--yellow-500), var(--pink-500))',
+              borderRadius: 18,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
+              boxShadow: '0 14px 22px rgba(255, 152, 82, 0.28)',
             }}
           >
-            <div style={{ width: 6, height: 6, background: '#0A0A0A', borderRadius: '50%' }} />
+            <Bot size={24} color="white" />
           </div>
-          <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em' }}>
-            ATL Robot Lab
-          </span>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <div className="eyebrow" style={{ color: 'var(--pink-500)' }}>Robot Adventure Lab</div>
+            <span style={{ color: 'var(--ink-900)', fontSize: 24, fontWeight: 800, fontFamily: 'var(--font-display)', lineHeight: 1 }}>
+              ATL Robot Lab
+            </span>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          {[
+            { label: 'Reset', onClick: handleReset, icon: RotateCcw, bg: 'var(--orange-100)' },
+            { label: 'Present', onClick: handlePresent, icon: Presentation, bg: 'var(--mint-100)' },
+            { label: 'Help', onClick: handleHelp, icon: CircleHelp, bg: 'var(--purple-100)' },
+          ].map(({ label, onClick, icon: Icon, bg }) => (
+            <button
+              key={label}
+              onClick={onClick}
+              className="kid-pill"
+              style={{
+                background: bg,
+                color: 'var(--ink-900)',
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              <Icon size={16} />
+              {label}
+            </button>
+          ))}
         </div>
-
-        <div style={{ flex: 1 }} />
-
-        {/* Action buttons */}
-        {[
-          { label: 'Reset', onClick: handleReset },
-          { label: 'Present', onClick: handlePresent },
-          { label: 'Help', onClick: handleHelp },
-        ].map(({ label, onClick }) => (
-          <button
-            key={label}
-            onClick={onClick}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#A1A1A1',
-              fontSize: 11,
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 500,
-              cursor: 'pointer',
-              padding: '2px 4px',
-              transition: 'color 0.15s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = 'white'}
-            onMouseLeave={e => e.currentTarget.style.color = '#A1A1A1'}
-          >
-            {label}
-          </button>
-        ))}
       </header>
 
       <Toast message={toast.message} show={toast.show} />

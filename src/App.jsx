@@ -53,13 +53,16 @@ export default function App() {
   }, [nextSection, prevSection]);
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      overflow: 'hidden',
-      fontFamily: 'Inter, system-ui, sans-serif',
-    }}>
+    <div
+      className="app-shell"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        overflow: 'hidden',
+        fontFamily: 'var(--font-body)',
+      }}
+    >
       {/* Persistent chrome */}
       <TeacherToolbar />
       <SectionNav />
@@ -75,12 +78,7 @@ export default function App() {
             animate="center"
             exit="exit"
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
+            className="section-frame"
           >
             <SectionRouter currentSection={currentSection} />
           </motion.div>

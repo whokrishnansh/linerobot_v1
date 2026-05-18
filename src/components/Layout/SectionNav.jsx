@@ -11,7 +11,7 @@ const SECTIONS = [
 function CheckIcon() {
   return (
     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-      <path d="M1 4L3.5 6.5L9 1" stroke="#0A0A0A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M1 4L3.5 6.5L9 1" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
 }
@@ -24,19 +24,29 @@ export default function SectionNav() {
       role="navigation"
       aria-label="Section navigation"
       style={{
-        height: 44,
-        background: '#FAFAF7',
-        borderBottom: '1px solid rgba(10,10,10,0.06)',
+        minHeight: 84,
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
-        padding: '0 24px 0 20px',
+        padding: '0 22px 16px',
         gap: 0,
         flexShrink: 0,
         zIndex: 40,
         position: 'relative',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1 }}>
+      <div
+        className="kid-surface"
+        style={{
+          width: '100%',
+          borderRadius: 28,
+          display: 'flex',
+          alignItems: 'center',
+          padding: '14px 18px',
+          gap: 14,
+        }}
+      >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, flexWrap: 'wrap' }}>
         {SECTIONS.map((section, i) => {
           const isCompleted = section.id < currentSection;
           const isActive = section.id === currentSection;
@@ -48,11 +58,12 @@ export default function SectionNav() {
               {i > 0 && (
                 <div
                   style={{
-                    width: 24,
-                    height: 1,
-                    background: isCompleted ? '#A1A1A1' : 'rgba(10,10,10,0.12)',
-                    marginLeft: 4,
-                    marginRight: 4,
+                    width: 26,
+                    height: 8,
+                    background: isCompleted ? 'linear-gradient(90deg, var(--mint-500), var(--teal-500))' : 'rgba(104, 132, 231, 0.18)',
+                    marginLeft: 6,
+                    marginRight: 6,
+                    borderRadius: 999,
                   }}
                 />
               )}
@@ -63,38 +74,44 @@ export default function SectionNav() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 6,
-                  background: 'none',
-                  border: 'none',
+                  gap: 10,
+                  background: isActive ? 'linear-gradient(135deg, var(--purple-100), rgba(255,255,255,0.95))' : 'transparent',
+                  border: isActive ? '1px solid rgba(141, 105, 255, 0.22)' : 'none',
                   cursor: isClickable ? 'pointer' : 'default',
-                  padding: '4px 6px',
-                  borderRadius: 6,
+                  padding: '8px 12px',
+                  borderRadius: 18,
                   transition: 'background 0.15s',
+                  opacity: isUpcoming ? 0.62 : 1,
                 }}
                 onMouseEnter={e => {
-                  if (isClickable) e.currentTarget.style.background = 'rgba(10,10,10,0.04)';
+                  if (isClickable && !isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.72)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'none';
+                  e.currentTarget.style.background = isActive ? 'linear-gradient(135deg, var(--purple-100), rgba(255,255,255,0.95))' : 'transparent';
                 }}
               >
                 {/* Circle */}
                 <div
                   style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: '50%',
+                    width: 34,
+                    height: 34,
+                    borderRadius: 14,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    background: isActive ? '#0A0A0A' : 'white',
+                    background: isActive
+                      ? 'linear-gradient(135deg, var(--pink-500), var(--orange-500))'
+                      : isCompleted
+                      ? 'linear-gradient(135deg, var(--mint-500), var(--teal-500))'
+                      : 'white',
                     border: isActive
                       ? 'none'
                       : isCompleted
-                      ? '1px solid #A1A1A1'
-                      : '1px solid rgba(10,10,10,0.2)',
+                      ? 'none'
+                      : '1.5px solid rgba(104, 132, 231, 0.22)',
                     transition: 'background 0.2s, border-color 0.2s',
+                    boxShadow: isActive ? '0 10px 18px rgba(255, 122, 182, 0.22)' : 'none',
                   }}
                 >
                   {isCompleted ? (
@@ -102,10 +119,10 @@ export default function SectionNav() {
                   ) : (
                     <span
                       style={{
-                        fontSize: 10,
-                        fontWeight: 600,
-                        fontFamily: 'Inter, sans-serif',
-                        color: isActive ? 'white' : '#A1A1A1',
+                        fontSize: 14,
+                        fontWeight: 800,
+                        fontFamily: 'var(--font-display)',
+                        color: isActive ? 'white' : 'var(--ink-900)',
                         lineHeight: 1,
                       }}
                     >
@@ -117,10 +134,10 @@ export default function SectionNav() {
                 {/* Label */}
                 <span
                   style={{
-                    fontSize: 12,
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? '#0A0A0A' : isCompleted ? '#737373' : '#A1A1A1',
+                    fontSize: 15,
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: isActive ? 800 : 700,
+                    color: isActive ? 'var(--ink-900)' : isCompleted ? 'var(--ink-900)' : 'var(--ink-700)',
                     whiteSpace: 'nowrap',
                     transition: 'color 0.2s',
                   }}
@@ -134,9 +151,10 @@ export default function SectionNav() {
       </div>
 
       {/* Step counter */}
-      <span style={{ fontSize: 11, color: '#A1A1A1', fontWeight: 500, fontFamily: 'Inter, sans-serif', flexShrink: 0 }}>
+      <span className="kid-pill" style={{ fontSize: 13, color: 'var(--ink-900)', fontWeight: 800, flexShrink: 0, background: 'var(--yellow-100)' }}>
         Step {currentSection} of 5
       </span>
+      </div>
     </nav>
   );
 }

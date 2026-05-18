@@ -206,29 +206,29 @@ export default function CircuitLab() {
   const activeTabMeta = TABS.find(t => t.id === activeTab);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '10px 24px 24px', gap: 16 }}>
       {/* Header strip */}
-      <div style={{ padding: '28px 64px 16px', flexShrink: 0, borderBottom: '1px solid rgba(10,10,10,0.06)', background: '#FAFAF7' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 99, background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.15)', marginBottom: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#4F46E5' }}>Understand the circuit</span>
+      <div className="kid-surface" style={{ padding: '26px 32px 18px', flexShrink: 0, borderRadius: 30, background: 'linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,253,248,0.98))' }}>
+        <div className="kid-pill" style={{ display: 'inline-flex', marginBottom: 10, background: 'var(--purple-100)' }}>
+          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--purple-500)' }}>Understand the circuit</span>
         </div>
         <h1 className="headline-md" style={{ marginBottom: 6 }}>
           How parts <span className="font-serif-italic">talk</span> to each other
         </h1>
-        <p style={{ fontSize: 14, color: '#525252', lineHeight: 1.55 }}>
+        <p className="body-md">
           Select a subsystem on the right to zoom into that part of the circuit.
         </p>
       </div>
 
       {/* Split layout */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', gap: 16 }}>
         {/* Left: circuit diagram (60%) */}
-        <div style={{ width: '60%', padding: 24, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div className="kid-surface" style={{ width: '60%', padding: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 30 }}>
           <div style={{
             flex: 1,
-            background: 'white',
-            border: '1px solid rgba(10,10,10,0.08)',
-            borderRadius: 16,
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.94), rgba(244,247,255,0.92))',
+            border: '1px solid rgba(104, 132, 231, 0.14)',
+            borderRadius: 24,
             padding: 24,
             position: 'relative',
             overflow: 'hidden',
@@ -243,11 +243,11 @@ export default function CircuitLab() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                background: 'white',
+                background: 'rgba(255,255,255,0.92)',
                 borderRadius: 99,
                 padding: '5px 10px',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-                border: '1px solid rgba(10,10,10,0.08)',
+                boxShadow: 'var(--shadow-soft)',
+                border: '1px solid rgba(104, 132, 231, 0.14)',
               }}>
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: activeTabMeta?.dot, flexShrink: 0 }} />
                 <span style={{ fontSize: 11, fontWeight: 500, color: '#0A0A0A', whiteSpace: 'nowrap' }}>
@@ -274,13 +274,13 @@ export default function CircuitLab() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
-                background: animateSignals ? '#0A0A0A' : 'white',
-                color: animateSignals ? 'white' : '#0A0A0A',
-                border: '1px solid rgba(10,10,10,0.12)',
-                borderRadius: 8,
+                background: animateSignals ? 'linear-gradient(135deg, var(--pink-500), var(--orange-500))' : 'white',
+                color: animateSignals ? 'white' : 'var(--ink-900)',
+                border: '1px solid rgba(104, 132, 231, 0.16)',
+                borderRadius: 14,
                 padding: '6px 12px',
                 fontSize: 12,
-                fontWeight: 500,
+                fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'background 0.2s, color 0.2s',
               }}
@@ -299,12 +299,12 @@ export default function CircuitLab() {
                 right: 14,
                 zIndex: 10,
                 background: 'white',
-                color: '#0A0A0A',
-                border: '1px solid rgba(10,10,10,0.12)',
-                borderRadius: 8,
+                color: 'var(--ink-900)',
+                border: '1px solid rgba(104, 132, 231, 0.16)',
+                borderRadius: 14,
                 padding: '6px 12px',
                 fontSize: 12,
-                fontWeight: 500,
+                fontWeight: 800,
                 cursor: 'pointer',
               }}
             >
@@ -427,11 +427,11 @@ export default function CircuitLab() {
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              background: 'white',
+              background: 'rgba(255,255,255,0.92)',
               borderRadius: 99,
               padding: '5px 12px',
-              border: '1px solid rgba(10,10,10,0.08)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              border: '1px solid rgba(104, 132, 231, 0.14)',
+              boxShadow: 'var(--shadow-soft)',
             }}>
               {[
                 { color: '#EF4444', label: 'Power (5V/12V)' },
@@ -441,7 +441,7 @@ export default function CircuitLab() {
               ].map(({ color, label }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <div style={{ width: 14, height: 2.5, background: color, borderRadius: 1 }} />
-                  <span style={{ fontSize: 11, color: '#525252', fontWeight: 500 }}>{label}</span>
+                  <span style={{ fontSize: 11, color: 'var(--ink-700)', fontWeight: 700 }}>{label}</span>
                 </div>
               ))}
             </div>
@@ -522,15 +522,16 @@ export default function CircuitLab() {
         </div>
 
         {/* Right: info panel (40%) */}
-        <div style={{ width: '40%', borderLeft: '1px solid rgba(10,10,10,0.06)', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'white' }}>
+        <div className="kid-surface" style={{ width: '40%', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'rgba(255,255,255,0.92)', borderRadius: 30 }}>
           {/* Tab group */}
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(10,10,10,0.06)', flexShrink: 0 }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(104, 132, 231, 0.12)', flexShrink: 0 }}>
             <div style={{
               display: 'flex',
-              background: 'rgba(10,10,10,0.04)',
-              borderRadius: 10,
+              background: 'var(--navy-100)',
+              borderRadius: 18,
               padding: 4,
               gap: 4,
+              border: '1px solid rgba(104, 132, 231, 0.14)',
             }} role="tablist">
               {TABS.map(tab => (
                 <button
@@ -540,17 +541,19 @@ export default function CircuitLab() {
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     flex: 1,
-                    padding: '7px 12px',
-                    borderRadius: 7,
+                    padding: '10px 12px',
+                    borderRadius: 14,
                     fontSize: 13,
-                    fontWeight: activeTab === tab.id ? 600 : 500,
-                    color: activeTab === tab.id ? '#0A0A0A' : '#737373',
-                    background: activeTab === tab.id ? 'white' : 'transparent',
+                    fontWeight: activeTab === tab.id ? 800 : 700,
+                    color: activeTab === tab.id ? 'white' : 'var(--ink-700)',
+                    background: activeTab === tab.id ? 'linear-gradient(135deg, var(--purple-500), var(--navy-900))' : 'transparent',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    boxShadow: activeTab === tab.id ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                    fontFamily: 'Inter, sans-serif',
+                    boxShadow: activeTab === tab.id ? '0 10px 20px rgba(91, 112, 197, 0.2)' : 'none',
+                    fontFamily: 'Nunito, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.03em',
                   }}
                 >
                   {tab.label}
@@ -574,26 +577,17 @@ export default function CircuitLab() {
       </div>
 
       {/* Footer */}
-      <div style={{
-        background: 'rgba(250,250,247,0.95)',
-        backdropFilter: 'blur(8px)',
-        borderTop: '1px solid rgba(10,10,10,0.08)',
-        padding: '14px 64px',
+      <div className="kid-surface" style={{
+        background: 'rgba(255,255,255,0.92)',
+        padding: '14px 18px',
         display: 'flex',
         justifyContent: 'flex-end',
         gap: 12,
         flexShrink: 0,
+        borderRadius: 24,
       }}>
-        <button
-          onClick={prevSection}
-          style={{ padding: '10px 18px', background: 'transparent', border: '1px solid rgba(10,10,10,0.15)', borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: 'pointer', color: '#0A0A0A', fontFamily: 'Inter, sans-serif' }}
-        >← Back</button>
-        <button
-          onClick={nextSection}
-          style={{ padding: '10px 20px', background: '#0A0A0A', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'transform 0.15s' }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-        >Continue to assembly →</button>
+        <button onClick={prevSection} className="kid-secondary">Back</button>
+        <button onClick={nextSection} className="kid-primary">Continue to assembly</button>
       </div>
     </div>
   );

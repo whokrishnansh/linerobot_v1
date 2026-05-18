@@ -195,15 +195,15 @@ function Motors({ visible }) {
   if (!visible) return null;
   return (
     <group>
-      {[[-1.4], [1.4]].map(([z], idx) => (
-        <group key={idx} position={[1.45, 0.22, z]}>
-          <GLBModel url={MODELS.motor} size={[0.9, 0.5, 0.5]} />
-          <mesh position={[0.6, 0, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.34, 0.34, 0.14, 24]} />
+      {[[-1.12], [1.12]].map(([z], idx) => (
+        <group key={idx} position={[1.28, 0.2, z]}>
+          <GLBModel url={MODELS.motor} size={[0.82, 0.46, 0.46]} />
+          <mesh position={[0.52, 0, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.31, 0.31, 0.13, 24]} />
             <meshStandardMaterial color="#111827" roughness={0.9} />
           </mesh>
-          <mesh position={[0.6, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.13, 0.13, 0.15, 16]} />
+          <mesh position={[0.52, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.12, 0.12, 0.14, 16]} />
             <meshStandardMaterial color="#9CA3AF" metalness={0.6} />
           </mesh>
         </group>
@@ -217,8 +217,8 @@ function Castor({ visible }) {
   return (
     <GLBUniformModel
       url={MODELS.castor}
-      position={[-2.12, 0.08, 0]}
-      fit={0.42}
+      position={[-1.68, 0.11, 0]}
+      fit={0.32}
       rotation={[0, 0, 0]}
     />
   );
@@ -231,8 +231,8 @@ function Arduino({ visible }) {
   return (
     <GLBModel
       url={MODELS.arduino}
-      position={[0.2, 0.3, 0.1]}
-      size={[1.2, 0.15, 1.0]}
+      position={[0.38, 0.36, 0.02]}
+      size={[1.08, 0.2, 0.92]}
       rotation={[-Math.PI / 2, 0, 0]}
     />
   );
@@ -296,26 +296,26 @@ function Battery({ visible }) {
 
 // ─── Terminal/pin coordinate tables ──────────────────────────────────────────
 // Pin coordinates match the CURRENT world-space position of each component.
-// Arduino at [0.2, 0.3, 0.1], size [1.2, 0.15, 1.0]  → x∈[-0.4, 0.8], y_top≈0.38, z∈[-0.4, 0.6]
+// Arduino at [0.38, 0.36, 0.02], size [1.08, 0.2, 0.92]
 // L298N   at [-1.0, 0.4, 0.1], size [0.9, 0.36, 1.0] → x∈[-1.45, -0.55], y_top≈0.58, z∈[-0.4, 0.6]
 // Breadboard at [1.25, 0.275, 0.1], size [0.8, 0.1, 0.8] → x∈[0.85, 1.65], y_top≈0.33, z∈[-0.3, 0.5]
-// Motors at [1.45, 0.22, ±1.4], body faces the chassis at x≈1.00
+// Motors at [1.28, 0.2, ±1.12], body faces the chassis at x≈0.95
 // IR sensors at [-2.15, 0.19, ±0.55], inner edge at x≈-1.80
 // Battery at [1.2, 0.46, 0.8], snap terminals on top face
 const PINS = {
   // Arduino digital header on the -X edge of the board, pins on top surface
   ard: {
-    vin: [-0.40, 0.39, -0.35],
-    v5:  [-0.40, 0.39, -0.25],
-    gnd: [-0.40, 0.39, -0.15],
-    d2:  [-0.40, 0.39, -0.05],
-    d3:  [-0.40, 0.39,  0.05],
-    d5:  [-0.40, 0.39,  0.15],
-    d6:  [-0.40, 0.39,  0.25],
-    d8:  [-0.40, 0.39,  0.35],
-    d9:  [-0.40, 0.39,  0.45],
-    d10: [-0.40, 0.39,  0.55],
-    d11: [-0.40, 0.39,  0.65],
+    vin: [-0.16, 0.48, -0.34],
+    v5:  [-0.16, 0.48, -0.24],
+    gnd: [-0.16, 0.48, -0.14],
+    d2:  [-0.16, 0.48, -0.04],
+    d3:  [-0.16, 0.48,  0.06],
+    d5:  [-0.16, 0.48,  0.16],
+    d6:  [-0.16, 0.48,  0.26],
+    d8:  [-0.16, 0.48,  0.36],
+    d9:  [-0.16, 0.48,  0.46],
+    d10: [-0.16, 0.48,  0.56],
+    d11: [-0.16, 0.48,  0.66],
   },
   // L298N: OUT screw block on +X edge (facing the motors),
   //        IN/EN pin header on -X edge (facing the Arduino),
@@ -339,10 +339,10 @@ const PINS = {
   },
   // Motor wire pads — slightly inside the motor body (motor at [1.45, 0.22, ±1.4], body ±0.25 in each axis)
   mot: {
-    leftA:  [1.10, 0.20,  1.30],
-    leftB:  [1.10, 0.20,  1.50],
-    rightA: [1.10, 0.20, -1.50],
-    rightB: [1.10, 0.20, -1.30],
+    leftA:  [0.94, 0.18,  1.02],
+    leftB:  [0.94, 0.18,  1.22],
+    rightA: [0.94, 0.18, -1.22],
+    rightB: [0.94, 0.18, -1.02],
   },
   // IR sensor 3-pin headers on the inner (+X) edge of each module
   ir: {
@@ -470,9 +470,9 @@ function Track({ visible }) {
 
 const HIGHLIGHT_MAP = {
   chassis:    { position: [0, 0.27, 0],       size: [4.45, 0.34, 4.45] },
-  motor:      { position: [1.45, 0.32, 0],    size: [1.7, 0.75, 3.3] },
-  castor:     { position: [-2.12, 0.12, 0],   size: [0.55, 0.45, 0.55] },
-  arduino:    { position: [0.2, 0.41, 0.1],    size: [1.35, 0.3, 1.15] },
+  motor:      { position: [1.28, 0.28, 0],    size: [1.55, 0.62, 2.65] },
+  castor:     { position: [-1.68, 0.14, 0],   size: [0.36, 0.34, 0.36] },
+  arduino:    { position: [0.38, 0.47, 0.02], size: [1.2, 0.34, 1.0] },
   breadboard: { position: [1.25, 0.34, 0.1],  size: [0.95, 0.22, 0.95] },
   l298n:      { position: [-1.0, 0.45, 0.1],  size: [1.05, 0.52, 1.15] },
   ir:         { position: [-2.15, 0.30, 0],   size: [0.9, 0.35, 1.8] },

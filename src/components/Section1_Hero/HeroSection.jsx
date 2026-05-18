@@ -1,89 +1,82 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, ChevronRight } from 'lucide-react';
+import { ArrowRight, Play, ChevronRight, Star } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { EyebrowPill } from '../../shared/Badge';
 
 const CARD_DATA = [
   {
-    eyebrow: 'THE BRAIN',
+    eyebrow: 'The Brain',
     name: 'Arduino UNO',
-    tooltip: 'The brain. A small programmable board that reads sensors and tells motors what to do.',
+    tooltip: 'This is the robot brain. It reads clues from the sensors and tells the motors what to do next.',
+    color: 'var(--yellow-100)',
   },
   {
-    eyebrow: 'THE EYES',
-    name: 'IR sensors ×2',
-    tooltip: 'The eyes. They shine infrared light down and detect whether the surface is black or white.',
+    eyebrow: 'The Eyes',
+    name: 'IR sensors x2',
+    tooltip: 'These tiny eyes look at the floor and notice the dark line so the robot can stay on track.',
+    color: 'var(--mint-100)',
   },
   {
-    eyebrow: 'THE CONTROLLER',
-    name: 'L298N driver',
-    tooltip: "The controller. Arduino can't drive motors directly — this chip does it safely.",
+    eyebrow: 'The Driver',
+    name: 'L298N board',
+    tooltip: 'This helper chip gives the motors enough power so the Arduino does not have to do the heavy lifting.',
+    color: 'var(--purple-100)',
   },
   {
-    eyebrow: 'THE WHEELS',
-    name: 'BO motors ×2',
-    tooltip: 'The legs. Two small geared motors turn the wheels left and right.',
+    eyebrow: 'The Wheels',
+    name: 'BO motors x2',
+    tooltip: 'The motors are the robot muscles. One speeds up, one slows down, and the robot turns smoothly.',
+    color: 'var(--pink-100)',
   },
 ];
 
-function ComponentTag({ eyebrow, name, tooltip }) {
+function ComponentTag({ eyebrow, name, tooltip, color }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
 
   return (
     <div style={{ position: 'relative' }}>
       {open && (
         <div
+          className="kid-surface"
           style={{
             position: 'absolute',
-            bottom: '110%',
+            bottom: '112%',
             left: 0,
-            width: 240,
-            background: '#0A0A0A',
-            color: 'white',
-            borderRadius: 10,
-            padding: '14px 16px',
+            width: 260,
+            background: 'var(--paper)',
+            borderRadius: 22,
+            padding: '16px 16px 14px',
             zIndex: 20,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
           }}
         >
-          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', color: '#737373', textTransform: 'uppercase', marginBottom: 6 }}>
-            {eyebrow}
-          </div>
-          <p style={{ fontSize: 13, lineHeight: 1.55, color: '#E5E5E5' }}>{tooltip}</p>
-          <div style={{ position: 'absolute', bottom: -6, left: 16, width: 12, height: 12, background: '#0A0A0A', transform: 'rotate(45deg)' }} />
+          <div className="eyebrow" style={{ marginBottom: 6 }}>{eyebrow}</div>
+          <p style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--ink-700)' }}>{tooltip}</p>
         </div>
       )}
       <button
-        ref={ref}
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
+        className="kid-surface"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          borderRadius: 10,
-          border: '1px solid rgba(255,255,255,0.6)',
-          padding: '12px 14px',
+          borderRadius: 22,
+          padding: '14px 16px',
           cursor: 'pointer',
           width: '100%',
           textAlign: 'left',
-          transition: 'background 0.2s',
+          background: color,
         }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.95)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.85)'}
       >
         <div>
-          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', color: '#737373', textTransform: 'uppercase', marginBottom: 3 }}>
+          <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: '0.04em', color: 'var(--ink-700)', textTransform: 'uppercase', marginBottom: 3 }}>
             {eyebrow}
           </div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#0A0A0A' }}>{name}</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--ink-900)' }}>{name}</div>
         </div>
-        <ChevronRight size={14} color="#A1A1A1" />
+        <ChevronRight size={16} color="var(--ink-500)" />
       </button>
     </div>
   );
@@ -93,116 +86,113 @@ export default function HeroSection() {
   const { nextSection } = useApp();
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-      {/* Left column */}
+    <div
+      style={{
+        display: 'flex',
+        height: '100%',
+        overflow: 'hidden',
+        padding: '10px 24px 24px',
+        gap: 20,
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, x: -24 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        className="kid-surface"
         style={{
-          width: '55%',
-          padding: '64px',
+          width: '54%',
+          padding: '48px 48px 40px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           flexShrink: 0,
+          borderRadius: 36,
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,253,248,0.98))',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <EyebrowPill dot color="#4F46E5">Activity 01 · Grades 9–10</EyebrowPill>
+        <div style={{ position: 'absolute', top: 18, right: 24, display: 'flex', gap: 10 }}>
+          <span className="kid-pill" style={{ background: 'var(--yellow-100)' }}><Star size={14} color="var(--orange-500)" /> Ages 13+</span>
+        </div>
 
-        <h1 className="headline-xl" style={{ marginBottom: 20, maxWidth: 560 }}>
-          Today we'll{' '}
-          <span className="font-serif-italic">build</span>{' '}
-          a Line Following Robot
+        <EyebrowPill dot color="#8d69ff">Activity 01 · Build your robot buddy</EyebrowPill>
+
+        <h1 className="headline-xl" style={{ marginBottom: 20, maxWidth: 620 }}>
+          Let&apos;s build a
+          <br />
+          <span className="font-serif-italic">line-following</span>
+          <br />
+          robot!
         </h1>
 
-        <p style={{ fontSize: 18, color: '#404040', lineHeight: 1.55, maxWidth: 460, marginBottom: 32, letterSpacing: '-0.005em' }}>
-          The same idea used by warehouse robots, hospital couriers, and factory floor carriers — a robot that sees a line on the ground and follows it.
+        <p className="body-lg" style={{ maxWidth: 520, marginBottom: 30 }}>
+          We&apos;ll teach a tiny robot how to spot a track, think fast, and zoom the right way. It&apos;s part puzzle, part machine, and very fun once it starts moving.
         </p>
 
-        {/* Button row */}
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 36 }}>
-          <button
-            onClick={nextSection}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '14px 22px',
-              borderRadius: 10,
-              background: '#0A0A0A',
-              color: 'white',
-              fontSize: 15,
-              fontWeight: 500,
-              fontFamily: 'Inter, sans-serif',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.18)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-            aria-label="Start building the robot"
-          >
-            Start building <ArrowRight size={16} />
+        <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 34, flexWrap: 'wrap' }}>
+          <button onClick={nextSection} className="kid-primary" aria-label="Start building the robot">
+            Start the mission <ArrowRight size={18} />
           </button>
 
-          <button
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '14px 18px',
-              borderRadius: 10,
-              background: 'transparent',
-              color: '#0A0A0A',
-              fontSize: 15,
-              fontWeight: 500,
-              fontFamily: 'Inter, sans-serif',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-            aria-label="Watch the demo video"
-          >
-            <span style={{
-              width: 32,
-              height: 32,
-              background: '#F1EFE8',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Play size={12} fill="#0A0A0A" color="#0A0A0A" />
+          <button className="kid-secondary" aria-label="Watch the demo video">
+            <span
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: '50%',
+                background: 'var(--purple-100)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Play size={14} fill="var(--purple-500)" color="var(--purple-500)" />
             </span>
-            Watch the demo
+            Watch demo
           </button>
         </div>
 
-        {/* Stats row */}
-        <div style={{ borderTop: '1px solid rgba(10,10,10,0.08)', paddingTop: 28, display: 'flex', gap: 40 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14, marginBottom: 26 }}>
           {[
-            { num: '13', label: 'Assembly steps' },
-            { num: '11', label: 'Real components' },
-            { num: '~45 min', label: 'Class duration' },
-          ].map(({ num, label }) => (
-            <div key={label}>
-              <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.1 }}>{num}</div>
-              <div style={{ fontSize: 12, color: '#737373', marginTop: 2 }}>{label}</div>
+            { num: '13', label: 'Build steps' },
+            { num: '11', label: 'Cool parts' },
+            { num: '45 min', label: 'Class adventure' },
+          ].map(({ num, label }, index) => (
+            <div
+              key={label}
+              className="kid-surface"
+              style={{
+                borderRadius: 24,
+                padding: '18px 18px 16px',
+                background: index === 0 ? 'var(--yellow-100)' : index === 1 ? 'var(--mint-100)' : 'var(--pink-100)',
+              }}
+            >
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 30, lineHeight: 1, color: 'var(--ink-900)' }}>{num}</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--ink-700)', marginTop: 6 }}>{label}</div>
             </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
+          {CARD_DATA.map((card) => (
+            <ComponentTag key={card.name} {...card} />
           ))}
         </div>
       </motion.div>
 
-      {/* Right column */}
-      <div style={{
-        width: '45%',
-        background: '#F1EFE8',
-        position: 'relative',
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
-        {/* SVG track illustration */}
+      <div
+        className="kid-surface"
+        style={{
+          width: '46%',
+          background: 'linear-gradient(180deg, #dff1ff 0%, #f5fbff 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+          flexShrink: 0,
+          borderRadius: 36,
+        }}
+      >
         <svg
           viewBox="0 0 600 620"
           preserveAspectRatio="xMidYMid slice"
@@ -211,7 +201,7 @@ export default function HeroSection() {
         >
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="20" r="1" fill="rgba(10,10,10,0.1)" />
+              <circle cx="20" cy="20" r="2.2" fill="rgba(53,83,199,0.12)" />
             </pattern>
             <path
               id="tp"
@@ -220,106 +210,69 @@ export default function HeroSection() {
             />
           </defs>
 
-          {/* Dot grid */}
           <rect width="600" height="620" fill="url(#grid)" />
+          <rect x="18" y="18" width="564" height="584" rx="28" fill="rgba(255,255,255,0.26)" />
 
-          {/* Track path border */}
           <use
             href="#tp"
-            stroke="rgba(10,10,10,0.08)"
-            strokeWidth="28"
+            stroke="rgba(53,83,199,0.12)"
+            strokeWidth="34"
             fill="none"
             strokeLinecap="round"
           />
-
-          {/* Track path */}
           <use
             href="#tp"
-            stroke="#0A0A0A"
-            strokeWidth="14"
+            stroke="#26328A"
+            strokeWidth="16"
             fill="none"
             strokeLinecap="round"
             strokeDasharray="1"
             strokeDashoffset="1"
           >
-            <animate
-              attributeName="stroke-dashoffset"
-              from="1"
-              to="0"
-              dur="1.6s"
-              begin="0.3s"
-              fill="freeze"
-            />
+            <animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.6s" begin="0.3s" fill="freeze" />
           </use>
 
-          {/* Robot body */}
           <g opacity="0">
-            <animate attributeName="opacity" from="0" to="1" begin="1.8s" dur="0.4s" fill="freeze" />
-
-            {/* Robot following the path */}
+            <animate attributeName="opacity" from="0" to="1" begin="1.6s" dur="0.4s" fill="freeze" />
             <g>
-              <animateMotion dur="9s" repeatCount="indefinite" begin="1.8s" rotate="auto">
-                <mpath href="#tp" />
-              </animateMotion>
-              <image
-                href="/robot_png.png"
-                x="-48"
-                y="-32"
-                width="96"
-                height="64"
-                preserveAspectRatio="xMidYMid meet"
-                transform="rotate(180)"
-              />
+              <g>
+                <animateMotion dur="8.5s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#tp" />
+                </animateMotion>
+                <g transform="rotate(180)">
+                  <image href="/robot_png.png" xlinkHref="/robot_png.png" x="-30" y="-30" width="60" height="60" preserveAspectRatio="xMidYMid meet" />
+                </g>
+              </g>
+              <circle r="38" fill="rgba(53,83,199,0.08)">
+                <animateMotion dur="8.5s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#tp" />
+                </animateMotion>
+              </circle>
             </g>
           </g>
         </svg>
 
-        {/* Status chip */}
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2 }}
-          style={{
-            position: 'absolute',
-            top: 28,
-            right: 28,
-            background: 'white',
-            borderRadius: 10,
-            padding: '10px 14px',
-            boxShadow: '0 4px 20px rgba(10,10,10,0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <span
-            className="animate-pulse-dot"
-            style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', flexShrink: 0 }}
-          />
-          <span style={{ fontSize: 12, fontWeight: 500, color: '#0A0A0A', whiteSpace: 'nowrap' }}>
-            Tracking line · IR sensors active
-          </span>
-        </motion.div>
+        <div style={{ position: 'absolute', top: 22, left: 22 }} className="kid-pill">
+          <span className="animate-pulse-dot" style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--mint-500)' }} />
+          <span style={{ fontWeight: 800, color: 'var(--ink-900)' }}>Tracking line and learning turns</span>
+        </div>
 
-        {/* Component tag grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.1, duration: 0.5 }}
-          style={{
-            position: 'absolute',
-            bottom: 32,
-            left: 32,
-            right: 32,
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
-          }}
-        >
+        <div style={{ position: 'absolute', right: 22, bottom: 34, left: 22, display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
           {CARD_DATA.map((card) => (
-            <ComponentTag key={card.eyebrow} {...card} />
+            <div
+              key={card.name}
+              className="kid-surface"
+              style={{
+                borderRadius: 24,
+                padding: '16px',
+                background: 'rgba(255,255,255,0.76)',
+              }}
+            >
+              <div className="eyebrow" style={{ marginBottom: 6 }}>{card.eyebrow}</div>
+              <div style={{ fontSize: 20, fontFamily: 'var(--font-display)', lineHeight: 1, color: 'var(--ink-900)' }}>{card.name}</div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
