@@ -19,7 +19,6 @@ function FittedModel({ url, fit = 2.15, rotation = [0, 0, 0], offset = [0, 0, 0]
 
   const { clone, center, scale } = useMemo(() => {
     const clonedScene = scene.clone(true);
-    clonedScene.rotation.set(rotation[0] || 0, rotation[1] || 0, rotation[2] || 0);
     clonedScene.traverse((object) => {
       if (object.isMesh) {
         object.castShadow = true;
@@ -27,7 +26,6 @@ function FittedModel({ url, fit = 2.15, rotation = [0, 0, 0], offset = [0, 0, 0]
         object.frustumCulled = false;
       }
     });
-    clonedScene.updateMatrixWorld(true);
 
     const box = new THREE.Box3().setFromObject(clonedScene);
     const size = new THREE.Vector3();
@@ -42,10 +40,10 @@ function FittedModel({ url, fit = 2.15, rotation = [0, 0, 0], offset = [0, 0, 0]
       center: modelCenter,
       scale: fit / maxDimension,
     };
-  }, [fit, rotation, scene]);
+  }, [fit, scene]);
 
   return (
-    <group position={offset}>
+    <group position={offset} rotation={rotation}>
       <primitive
         object={clone}
         scale={scale}

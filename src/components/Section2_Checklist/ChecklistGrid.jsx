@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Check, ArrowLeft, ArrowRight, Gift, Star } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { COMPONENTS } from '../../data/components.jsx';
 import { useToast, Toast } from '../../shared/Toast';
@@ -22,46 +22,51 @@ function ComponentCard({ component }) {
       onClick={() => toggleComponent(component.id)}
       aria-pressed={checked}
       aria-label={`${component.name}, ${checked ? 'checked' : 'unchecked'}`}
-      className="kid-surface"
       style={{
-        background: checked ? 'var(--mint-100)' : 'rgba(255,255,255,0.95)',
-        borderRadius: 28,
-        padding: '18px',
+        background: checked ? '#F7F7F4' : 'white',
+        border: `1px solid ${checked ? 'rgba(10,10,10,0.15)' : 'rgba(10,10,10,0.08)'}`,
+        borderRadius: 14,
+        padding: '20px 18px',
         cursor: 'pointer',
         textAlign: 'left',
         position: 'relative',
-        boxShadow: checked ? '0 18px 28px rgba(82, 214, 162, 0.16)' : 'var(--shadow-card)',
+        transition: 'background 0.2s, border-color 0.2s, transform 0.15s',
+        boxShadow: checked ? '0 2px 10px rgba(10,10,10,0.04)' : 'none',
       }}
-      whileHover={{ y: -4, rotate: -0.4 }}
+      whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
     >
+      {/* Check circle */}
       <div
         style={{
           position: 'absolute',
           top: 14,
           right: 14,
           zIndex: 5,
-          width: 30,
-          height: 30,
-          borderRadius: 12,
-          border: `2px solid ${checked ? 'transparent' : 'rgba(104, 132, 231, 0.2)'}`,
-          background: checked ? 'linear-gradient(135deg, var(--pink-500), var(--orange-500))' : 'rgba(255,255,255,0.96)',
+          width: 22,
+          height: 22,
+          borderRadius: '50%',
+          border: `1.5px solid ${checked ? 'transparent' : 'rgba(10,10,10,0.25)'}`,
+          background: checked ? '#0A0A0A' : 'rgba(255,255,255,0.9)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          transition: 'background 0.2s, border-color 0.2s',
           flexShrink: 0,
-          boxShadow: '0 8px 18px rgba(87, 101, 143, 0.12)',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         }}
       >
-        {checked && <Check size={16} color="white" strokeWidth={2.5} />}
+        {checked && <Check size={12} color="white" strokeWidth={2.5} />}
       </div>
 
+      {/* Image area */}
       <div
         style={{
           aspectRatio: '4/3',
-          background: checked ? 'rgba(255,255,255,0.75)' : 'linear-gradient(180deg, var(--yellow-100), #fff)',
-          borderRadius: 22,
-          marginBottom: 16,
+          background: '#F1EFE8',
+          borderRadius: 10,
+          marginBottom: 14,
           overflow: 'hidden',
           position: 'relative',
           display: 'flex',
@@ -70,14 +75,18 @@ function ComponentCard({ component }) {
           padding: hasModel ? 0 : 12,
         }}
       >
-        {hasModel ? <ComponentModelPreview model={component.model} fallback={Svg} /> : <Svg />}
+        {hasModel ? (
+          <ComponentModelPreview model={component.model} fallback={Svg} />
+        ) : (
+          <Svg />
+        )}
       </div>
 
-      <div className="eyebrow" style={{ marginBottom: 6, color: 'var(--purple-500)' }}>{component.role}</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 27, lineHeight: 1.05, color: 'var(--ink-900)', marginBottom: 6 }}>
-        {component.name}
+      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#737373', marginBottom: 4 }}>
+        {component.role}
       </div>
-      <div style={{ fontSize: 14, color: 'var(--ink-700)', fontWeight: 700 }}>Quantity: {component.quantity}</div>
+      <div style={{ fontSize: 15, fontWeight: 600, color: '#0A0A0A', marginBottom: 4 }}>{component.name}</div>
+      <div style={{ fontSize: 12, color: '#A1A1A1' }}>Quantity: {component.quantity}</div>
     </motion.button>
   );
 }
@@ -93,60 +102,67 @@ function SupplyCard({ component }) {
       onClick={() => toggleComponent(component.id)}
       aria-pressed={checked}
       aria-label={`${component.name}, ${checked ? 'checked' : 'unchecked'}`}
-      className="kid-surface"
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        background: checked ? 'var(--purple-100)' : 'rgba(255,255,255,0.96)',
-        borderRadius: 24,
-        padding: '12px 14px',
+        gap: 10,
+        background: checked ? '#F7F7F4' : 'white',
+        border: `1px solid ${checked ? 'rgba(10,10,10,0.15)' : 'rgba(10,10,10,0.08)'}`,
+        borderRadius: 10,
+        padding: '10px 12px',
         cursor: 'pointer',
         textAlign: 'left',
+        transition: 'background 0.2s, border-color 0.2s',
         width: '100%',
       }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -1 }}
       whileTap={{ scale: 0.99 }}
     >
+      {/* Thumbnail */}
       <div
         style={{
-          width: 58,
-          height: 58,
-          background: checked ? 'rgba(255,255,255,0.9)' : 'var(--yellow-100)',
-          borderRadius: 18,
+          width: 44,
+          height: 44,
+          background: '#F1EFE8',
+          borderRadius: 8,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative',
           flexShrink: 0,
           overflow: 'hidden',
           padding: hasModel ? 0 : 6,
+          position: 'relative',
         }}
       >
-        {hasModel ? <ComponentModelPreview model={component.model} fallback={Svg} /> : <Svg />}
+        {hasModel ? (
+          <ComponentModelPreview model={component.model} fallback={Svg} />
+        ) : (
+          <Svg />
+        )}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 19, fontFamily: 'var(--font-display)', color: 'var(--ink-900)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {component.name}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--ink-700)', fontWeight: 700 }}>Qty {component.quantity}</div>
+        <div style={{ fontSize: 11, color: '#A1A1A1' }}>Qty {component.quantity}</div>
       </div>
 
       <div
         style={{
-          width: 24,
-          height: 24,
-          borderRadius: 10,
-          border: `2px solid ${checked ? 'transparent' : 'rgba(104, 132, 231, 0.2)'}`,
-          background: checked ? 'linear-gradient(135deg, var(--pink-500), var(--orange-500))' : 'transparent',
+          width: 18,
+          height: 18,
+          borderRadius: '50%',
+          border: `1.5px solid ${checked ? 'transparent' : 'rgba(10,10,10,0.2)'}`,
+          background: checked ? '#0A0A0A' : 'transparent',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
+          transition: 'background 0.2s, border-color 0.2s',
         }}
       >
-        {checked && <Check size={12} color="white" strokeWidth={2.5} />}
+        {checked && <Check size={10} color="white" strokeWidth={2.5} />}
       </div>
     </motion.button>
   );
@@ -154,10 +170,12 @@ function SupplyCard({ component }) {
 
 function SectionDivider({ label, count }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-      <span className="kid-pill" style={{ background: 'var(--purple-100)', fontSize: 13, fontWeight: 800 }}>{label}</span>
-      <div style={{ flex: 1, height: 8, background: 'rgba(104, 132, 231, 0.12)', borderRadius: 999 }} />
-      <span style={{ fontSize: 13, color: 'var(--ink-700)', fontWeight: 800, whiteSpace: 'nowrap' }}>{count} {count === 1 ? 'item' : 'items'}</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#737373', whiteSpace: 'nowrap' }}>
+        {label}
+      </span>
+      <div style={{ flex: 1, height: 1, background: 'rgba(10,10,10,0.08)' }} />
+      <span style={{ fontSize: 11, color: '#A1A1A1', fontWeight: 500, whiteSpace: 'nowrap' }}>{count} {count === 1 ? 'item' : 'items'}</span>
     </div>
   );
 }
@@ -168,139 +186,180 @@ export default function ChecklistGrid() {
 
   const checkedCount = ALL_IDS.filter(id => !!checkedComponents[id]).length;
   const allChecked = checkedCount === TOTAL;
-  const progress = (checkedCount / TOTAL) * 100;
 
   function handleMarkAll() {
-    markAllComponents(ALL_IDS, !allChecked);
+    if (allChecked) {
+      markAllComponents(ALL_IDS, false);
+    } else {
+      markAllComponents(ALL_IDS, true);
+    }
   }
 
   function handleMissingReport() {
-    showToast('Got it. Tell your teacher which part is missing.');
+    showToast('Reported — your teacher will follow up.');
   }
 
+  const progress = (checkedCount / TOTAL) * 100;
+
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '10px 24px 136px' }}>
-      <div
-        className="kid-surface"
-        style={{
-          padding: '34px 34px 32px',
-          borderRadius: 34,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,253,248,0.98))',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 24, marginBottom: 30 }}>
+    <div style={{ flex: 1, overflowY: 'auto', background: '#FAFAF7', paddingBottom: 120 }}>
+      <div style={{ padding: '48px 64px 0' }}>
+        {/* Header row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
           <div>
-            <div className="kid-pill" style={{ marginBottom: 14, background: 'var(--yellow-100)' }}>
-              <Gift size={16} color="var(--orange-500)" />
-              <span className="eyebrow" style={{ color: 'var(--orange-500)' }}>Unbox your robot kit</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(10,10,10,0.04)', border: '1px solid rgba(10,10,10,0.06)', marginBottom: 12 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#737373' }}>
+                Before we start
+              </span>
             </div>
-            <h1 className="headline-lg" style={{ marginBottom: 10 }}>
-              Let&apos;s check your
-              <span className="font-serif-italic"> robot parts</span>
+            <h1 className="headline-lg" style={{ marginBottom: 12 }}>
+              Let's <span className="font-serif-italic">check</span> your kit
             </h1>
-            <p className="body-md" style={{ maxWidth: 600 }}>
-              Find each item on your desk and tap it when you spot it. When the whole kit is ready, we can jump into the circuit lab.
+            <p style={{ fontSize: 16, color: '#525252', lineHeight: 1.6, maxWidth: 520, letterSpacing: '-0.005em' }}>
+              Find each part on your desk and tap it to mark it ready. You'll need all of them before we move to the circuit lab.
             </p>
           </div>
 
-          <div className="kid-surface" style={{ padding: '18px 22px', borderRadius: 28, background: 'var(--paper)', minWidth: 220, textAlign: 'right' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, lineHeight: 0.95, color: 'var(--ink-900)', marginBottom: 8 }}>
-              {checkedCount}
-              <span style={{ fontSize: 22, color: 'var(--ink-500)', marginLeft: 6 }}>/ {TOTAL}</span>
+          {/* Counter */}
+          <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 32 }}>
+            <div style={{ fontSize: 36, fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 6 }}>
+              <span style={{ color: '#0A0A0A' }}>{checkedCount}</span>
+              <span style={{ color: '#A1A1A1', fontSize: 24 }}>/{TOTAL} Parts ready</span>
             </div>
-            <div style={{ fontSize: 13, color: 'var(--ink-700)', fontWeight: 800, marginBottom: 8 }}>Parts ready for building</div>
-            <button onClick={handleMarkAll} style={{ background: 'none', border: 'none', color: 'var(--purple-500)', fontWeight: 800, cursor: 'pointer' }}>
-              {allChecked ? 'Teacher shortcut: unmark all' : 'Teacher shortcut: mark all'}
+            <button
+              onClick={handleMarkAll}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: 11,
+                fontWeight: 500,
+                color: '#737373',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+                padding: 0,
+                textDecoration: 'underline',
+                textDecorationColor: 'rgba(115,115,115,0.4)',
+              }}
+            >
+              {allChecked ? '✓ Teacher shortcut: unmark all' : '✓ Teacher shortcut: mark all'}
             </button>
           </div>
         </div>
 
-        <div className="progress-bar" style={{ marginBottom: 34 }}>
+        {/* Progress bar */}
+        <div className="progress-bar" style={{ marginBottom: 40 }}>
           <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
         </div>
 
-        <SectionDivider label="Core team" count={CORE.length} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 42 }}>
+        {/* Core components */}
+        <SectionDivider label="Core components" count={CORE.length} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 40 }}>
           {CORE.map(c => <ComponentCard key={c.id} component={c} />)}
         </div>
 
-        <SectionDivider label="Supply box" count={SUPPLY.length + 1} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        {/* Supplies */}
+        <SectionDivider label="Supplies & Accessories" count={SUPPLY.length + 1} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
           {SUPPLY.map(c => <SupplyCard key={c.id} component={c} />)}
 
+          {/* Missing card */}
           <button
             onClick={handleMissingReport}
-            className="kid-surface"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 12,
-              borderRadius: 24,
-              padding: '12px 14px',
-              background: 'rgba(255,255,255,0.7)',
+              gap: 10,
+              border: '1.5px dashed rgba(10,10,10,0.15)',
+              borderRadius: 10,
+              padding: '10px 12px',
+              background: 'transparent',
               cursor: 'pointer',
               width: '100%',
-              borderStyle: 'dashed',
+              transition: 'border-color 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(10,10,10,0.3)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(10,10,10,0.15)'}
             aria-label="Report a missing component"
           >
-            <div
-              style={{
-                width: 58,
-                height: 58,
-                border: '2px dashed rgba(104, 132, 231, 0.28)',
-                borderRadius: 18,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                color: 'var(--purple-500)',
-                fontSize: 28,
-                fontWeight: 800,
-              }}
-            >
-              +
-            </div>
+            <div style={{
+              width: 44, height: 44,
+              border: '1px dashed rgba(10,10,10,0.15)',
+              borderRadius: 8,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, color: '#A1A1A1', fontSize: 20,
+            }}>+</div>
             <div>
-              <div style={{ fontSize: 19, fontFamily: 'var(--font-display)', color: 'var(--ink-900)' }}>Missing something?</div>
-              <div style={{ fontSize: 13, color: 'var(--ink-700)', fontWeight: 700 }}>Tell the teacher</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#737373' }}>Missing something?</div>
+              <div style={{ fontSize: 11, color: '#A1A1A1' }}>Report to teacher</div>
             </div>
           </button>
         </div>
       </div>
 
-      <div
-        className="kid-surface"
-        style={{
-          position: 'fixed',
-          bottom: 18,
-          left: 24,
-          right: 24,
-          background: 'rgba(255,255,255,0.92)',
-          padding: '14px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 18,
-          zIndex: 30,
-          borderRadius: 28,
-        }}
-      >
-        <div className="kid-pill" style={{ background: allChecked ? 'var(--mint-100)' : 'var(--yellow-100)' }}>
-          <Star size={16} color={allChecked ? 'var(--mint-500)' : 'var(--orange-500)'} />
-          <span style={{ fontWeight: 800, color: 'var(--ink-900)' }}>
-            {allChecked ? 'Amazing. Your full kit is ready to go.' : 'Keep hunting for every part before the next step.'}
-          </span>
-        </div>
+      {/* Sticky footer */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'rgba(250,250,247,0.95)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        borderTop: '1px solid rgba(10,10,10,0.08)',
+        padding: '16px 64px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        zIndex: 30,
+      }}>
+        <p style={{
+          fontSize: 13,
+          color: allChecked ? '#0A0A0A' : '#737373',
+          fontWeight: allChecked ? 500 : 400,
+          transition: 'color 0.3s',
+        }}>
+          {allChecked
+            ? 'All parts ready. You can move to the circuit lab.'
+            : `Tap each part you have on your desk. Continue will activate once all ${TOTAL} are ready.`}
+        </p>
 
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button onClick={prevSection} className="kid-secondary">
-            <ArrowLeft size={18} />
-            Back
+        <div style={{ display: 'flex', gap: 12, flexShrink: 0 }}>
+          <button
+            onClick={prevSection}
+            style={{
+              padding: '10px 18px',
+              background: 'transparent',
+              border: '1px solid rgba(10,10,10,0.15)',
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              color: '#0A0A0A',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            ← Back
           </button>
-          <button onClick={nextSection} className="kid-primary" disabled={!allChecked}>
-            Circuit lab
-            <ArrowRight size={18} />
+          <button
+            onClick={() => allChecked && nextSection()}
+            disabled={!allChecked}
+            aria-disabled={!allChecked}
+            style={{
+              padding: '10px 20px',
+              background: allChecked ? '#0A0A0A' : 'rgba(10,10,10,0.1)',
+              color: allChecked ? 'white' : '#A1A1A1',
+              border: 'none',
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: allChecked ? 'pointer' : 'not-allowed',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'background 0.2s, color 0.2s, transform 0.15s',
+            }}
+            onMouseEnter={e => { if (allChecked) e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
+          >
+            Continue to circuit lab →
           </button>
         </div>
       </div>
