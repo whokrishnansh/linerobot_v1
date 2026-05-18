@@ -195,15 +195,15 @@ function Motors({ visible }) {
   if (!visible) return null;
   return (
     <group>
-      {[[-1.4], [1.4]].map(([z], idx) => (
-        <group key={idx} position={[1.45, 0.22, z]}>
-          <GLBModel url={MODELS.motor} size={[0.9, 0.5, 0.5]} />
-          <mesh position={[0.6, 0, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.34, 0.34, 0.14, 24]} />
+      {[[-1.12], [1.12]].map(([z], idx) => (
+        <group key={idx} position={[1.28, 0.2, z]}>
+          <GLBModel url={MODELS.motor} size={[0.82, 0.46, 0.46]} />
+          <mesh position={[0.52, 0, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.31, 0.31, 0.13, 24]} />
             <meshStandardMaterial color="#111827" roughness={0.9} />
           </mesh>
-          <mesh position={[0.6, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.13, 0.13, 0.15, 16]} />
+          <mesh position={[0.52, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.12, 0.12, 0.14, 16]} />
             <meshStandardMaterial color="#9CA3AF" metalness={0.6} />
           </mesh>
         </group>
@@ -217,8 +217,8 @@ function Castor({ visible }) {
   return (
     <GLBUniformModel
       url={MODELS.castor}
-      position={[-2.12, 0.08, 0]}
-      fit={0.42}
+      position={[-1.68, 0.11, 0]}
+      fit={0.32}
       rotation={[0, 0, 0]}
     />
   );
@@ -231,8 +231,8 @@ function Arduino({ visible }) {
   return (
     <GLBModel
       url={MODELS.arduino}
-      position={[0.2, 0.3, 0.1]}
-      size={[1.2, 0.15, 1.0]}
+      position={[0.38, 0.36, 0.02]}
+      size={[1.08, 0.2, 0.92]}
       rotation={[-Math.PI / 2, 0, 0]}
     />
   );
@@ -296,26 +296,26 @@ function Battery({ visible }) {
 
 // ─── Terminal/pin coordinate tables ──────────────────────────────────────────
 // Pin coordinates match the CURRENT world-space position of each component.
-// Arduino at [0.2, 0.3, 0.1], size [1.2, 0.15, 1.0]  → x∈[-0.4, 0.8], y_top≈0.38, z∈[-0.4, 0.6]
+// Arduino at [0.38, 0.36, 0.02], size [1.08, 0.2, 0.92]
 // L298N   at [-1.0, 0.4, 0.1], size [0.9, 0.36, 1.0] → x∈[-1.45, -0.55], y_top≈0.58, z∈[-0.4, 0.6]
 // Breadboard at [1.25, 0.275, 0.1], size [0.8, 0.1, 0.8] → x∈[0.85, 1.65], y_top≈0.33, z∈[-0.3, 0.5]
-// Motors at [1.45, 0.22, ±1.4], body faces the chassis at x≈1.00
+// Motors at [1.28, 0.2, ±1.12], body faces the chassis at x≈0.95
 // IR sensors at [-2.15, 0.19, ±0.55], inner edge at x≈-1.80
 // Battery at [1.2, 0.46, 0.8], snap terminals on top face
 const PINS = {
   // Arduino digital header on the -X edge of the board, pins on top surface
   ard: {
-    vin: [-0.40, 0.39, -0.35],
-    v5:  [-0.40, 0.39, -0.25],
-    gnd: [-0.40, 0.39, -0.15],
-    d2:  [-0.40, 0.39, -0.05],
-    d3:  [-0.40, 0.39,  0.05],
-    d5:  [-0.40, 0.39,  0.15],
-    d6:  [-0.40, 0.39,  0.25],
-    d8:  [-0.40, 0.39,  0.35],
-    d9:  [-0.40, 0.39,  0.45],
-    d10: [-0.40, 0.39,  0.55],
-    d11: [-0.40, 0.39,  0.65],
+    vin: [-0.16, 0.48, -0.34],
+    v5:  [-0.16, 0.48, -0.24],
+    gnd: [-0.16, 0.48, -0.14],
+    d2:  [-0.16, 0.48, -0.04],
+    d3:  [-0.16, 0.48,  0.06],
+    d5:  [-0.16, 0.48,  0.16],
+    d6:  [-0.16, 0.48,  0.26],
+    d8:  [-0.16, 0.48,  0.36],
+    d9:  [-0.16, 0.48,  0.46],
+    d10: [-0.16, 0.48,  0.56],
+    d11: [-0.16, 0.48,  0.66],
   },
   // L298N: OUT screw block on +X edge (facing the motors),
   //        IN/EN pin header on -X edge (facing the Arduino),
@@ -339,10 +339,10 @@ const PINS = {
   },
   // Motor wire pads — slightly inside the motor body (motor at [1.45, 0.22, ±1.4], body ±0.25 in each axis)
   mot: {
-    leftA:  [1.10, 0.20,  1.30],
-    leftB:  [1.10, 0.20,  1.50],
-    rightA: [1.10, 0.20, -1.50],
-    rightB: [1.10, 0.20, -1.30],
+    leftA:  [0.94, 0.18,  1.02],
+    leftB:  [0.94, 0.18,  1.22],
+    rightA: [0.94, 0.18, -1.22],
+    rightB: [0.94, 0.18, -1.02],
   },
   // IR sensor 3-pin headers on the inner (+X) edge of each module
   ir: {
@@ -460,16 +460,8 @@ function Track({ visible }) {
         <planeGeometry args={[18, 12]} />
         <meshStandardMaterial color="#E8E4D8" />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <planeGeometry args={[0.14, 12]} />
-        <meshStandardMaterial color="#0A0A0A" />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, Math.PI / 2.8]} position={[3.5, 0.01, 2.5]}>
-        <planeGeometry args={[0.14, 6]} />
-        <meshStandardMaterial color="#0A0A0A" />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[5, 0.01, 4]}>
-        <planeGeometry args={[0.14, 5]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <torusGeometry args={[TRACK_RADIUS, 0.07, 14, 120]} />
         <meshStandardMaterial color="#0A0A0A" />
       </mesh>
     </group>
@@ -478,9 +470,9 @@ function Track({ visible }) {
 
 const HIGHLIGHT_MAP = {
   chassis:    { position: [0, 0.27, 0],       size: [4.45, 0.34, 4.45] },
-  motor:      { position: [1.45, 0.32, 0],    size: [1.7, 0.75, 3.3] },
-  castor:     { position: [-2.12, 0.12, 0],   size: [0.55, 0.45, 0.55] },
-  arduino:    { position: [0.2, 0.41, 0.1],    size: [1.35, 0.3, 1.15] },
+  motor:      { position: [1.28, 0.28, 0],    size: [1.55, 0.62, 2.65] },
+  castor:     { position: [-1.68, 0.14, 0],   size: [0.36, 0.34, 0.36] },
+  arduino:    { position: [0.38, 0.47, 0.02], size: [1.2, 0.34, 1.0] },
   breadboard: { position: [1.25, 0.34, 0.1],  size: [0.95, 0.22, 0.95] },
   l298n:      { position: [-1.0, 0.45, 0.1],  size: [1.05, 0.52, 1.15] },
   ir:         { position: [-2.15, 0.30, 0],   size: [0.9, 0.35, 1.8] },
@@ -519,14 +511,19 @@ const WIRE_GROUPS = ['wires_motor', 'wires_sensor', 'wires_control', 'wires_powe
 const OP_ACTIVE  = 1.0;
 const OP_OLD     = 0.12;
 const OP_NEUTRAL = 0.5;
+const TRACK_RADIUS = 3.4;
+const TRACK_ANGULAR_SPEED = 0.32;
 
 export default function AssemblyScene({ currentStep, cameraOverride }) {
   const step     = ASSEMBLY_STEPS[currentStep - 1];
   const prevStep = currentStep > 1 ? ASSEMBLY_STEPS[currentStep - 2] : null;
   const reveal     = step?.reveal     || [];
   const prevReveal = prevStep?.reveal || [];
+  const showTrack = reveal.includes('track');
   const camPos   = cameraOverride?.position || step?.camera?.position || [0, 9, 7];
   const camTarget = cameraOverride?.target  || step?.camera?.target  || [0, 0, 0];
+  const robotGroupRef = useRef(null);
+  const moveT = useRef(0);
 
   const newestComponent = reveal[reveal.length - 1];
   const highlightProps  = HIGHLIGHT_MAP[newestComponent];
@@ -540,6 +537,30 @@ export default function AssemblyScene({ currentStep, cameraOverride }) {
     return OP_OLD;
   }
 
+  useFrame((_, delta) => {
+    if (!robotGroupRef.current) return;
+
+    if (currentStep === 13) {
+      moveT.current += delta * TRACK_ANGULAR_SPEED;
+      const angle = moveT.current;
+      const x = TRACK_RADIUS * Math.cos(angle);
+      const z = TRACK_RADIUS * Math.sin(angle);
+
+      const tangentX = -Math.sin(angle);
+      const tangentZ = Math.cos(angle);
+
+      robotGroupRef.current.position.x = x;
+      robotGroupRef.current.position.z = z;
+      robotGroupRef.current.rotation.y = Math.atan2(tangentZ, -tangentX);
+      return;
+    }
+
+    moveT.current = 0;
+    robotGroupRef.current.position.x = 0;
+    robotGroupRef.current.position.z = 0;
+    robotGroupRef.current.rotation.y = 0;
+  });
+
   return (
     <>
       <CameraController targetPosition={camPos} targetLookAt={camTarget} />
@@ -552,30 +573,34 @@ export default function AssemblyScene({ currentStep, cameraOverride }) {
         <planeGeometry args={[22, 22]} />
         <meshStandardMaterial color="#E8E4D8" />
       </mesh>
-      <gridHelper args={[22, 22, 'rgba(10,10,10,0.04)', 'rgba(10,10,10,0.04)']} position={[0, -0.16, 0]} />
-
-      <Chassis    visible={reveal.includes('chassis')} />
-      <Motors     visible={reveal.includes('motor')} />
-      <Castor     visible={reveal.includes('castor')} />
-      <Arduino    visible={reveal.includes('arduino')} />
-      <Breadboard visible={reveal.includes('breadboard')} />
-      <L298N      visible={reveal.includes('l298n')} />
-      <IRSensors  visible={reveal.includes('ir')} />
-
-      <MotorWires   visible={reveal.includes('wires_motor')}   opacity={wireOpacity('wires_motor')} />
-      <SensorWires  visible={reveal.includes('wires_sensor')}  opacity={wireOpacity('wires_sensor')} />
-      <ControlWires visible={reveal.includes('wires_control')} opacity={wireOpacity('wires_control')} />
-      <Battery      visible={reveal.includes('battery')} />
-      <PowerWires   visible={reveal.includes('wires_power')}   opacity={wireOpacity('wires_power')} />
-      <Track        visible={reveal.includes('track')} />
-
-      {highlightProps && ['chassis','motor','castor','arduino','breadboard','l298n','ir','battery'].includes(newestComponent) && (
-        <HighlightBox
-          position={highlightProps.position}
-          size={highlightProps.size}
-          color={step?.phaseColor || '#4F46E5'}
-        />
+      {!showTrack && (
+        <gridHelper args={[22, 22, 'rgba(10,10,10,0.04)', 'rgba(10,10,10,0.04)']} position={[0, -0.16, 0]} />
       )}
+
+      <group ref={robotGroupRef}>
+        <Chassis    visible={reveal.includes('chassis')} />
+        <Motors     visible={reveal.includes('motor')} />
+        <Castor     visible={reveal.includes('castor')} />
+        <Arduino    visible={reveal.includes('arduino')} />
+        <Breadboard visible={reveal.includes('breadboard')} />
+        <L298N      visible={reveal.includes('l298n')} />
+        <IRSensors  visible={reveal.includes('ir')} />
+
+        <MotorWires   visible={reveal.includes('wires_motor')}   opacity={wireOpacity('wires_motor')} />
+        <SensorWires  visible={reveal.includes('wires_sensor')}  opacity={wireOpacity('wires_sensor')} />
+        <ControlWires visible={reveal.includes('wires_control')} opacity={wireOpacity('wires_control')} />
+        <Battery      visible={reveal.includes('battery')} />
+        <PowerWires   visible={reveal.includes('wires_power')}   opacity={wireOpacity('wires_power')} />
+
+        {highlightProps && ['chassis','motor','castor','arduino','breadboard','l298n','ir','battery'].includes(newestComponent) && (
+          <HighlightBox
+            position={highlightProps.position}
+            size={highlightProps.size}
+            color={step?.phaseColor || '#4F46E5'}
+          />
+        )}
+      </group>
+      <Track        visible={reveal.includes('track')} />
 
       <OrbitControls
         enableDamping

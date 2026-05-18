@@ -67,6 +67,6 @@ export const USE_CASES = [
     ],
     thumbnail: 'https://unsplash.com/photos/cp-IWd2-STM/download?force=true&w=1200&v=driverless-car-3',
     thumbnailPosition: 'center 50%',
-    dark: true,
+    dark: false,
   },
 ];
